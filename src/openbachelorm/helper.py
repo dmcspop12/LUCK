@@ -55,11 +55,11 @@ def get_asset_dat_url(res_version: str, asset_rel_filepath: Path):
     return f"{ORIG_ASSET_URL_PREFIX}/{res_version}/{asset_dat_url_filename}"
 
 
-def download_asset(res_version: str, asset_rel_filepath: Path):
+def download_asset(res_version: str, asset_rel_filepath: Path) -> Path:
     asset_filepath = Path(ASSET_DIRPATH) / res_version / asset_rel_filepath
 
     if asset_filepath.is_file():
-        return
+        return asset_filepath
 
     asset_filepath.parent.mkdir(parents=True, exist_ok=True)
 
@@ -72,18 +72,22 @@ def download_asset(res_version: str, asset_rel_filepath: Path):
     with ZipFile(asset_dat_filepath) as zf:
         asset_filepath.write_bytes(zf.read(asset_rel_filepath.as_posix()))
 
+    return asset_filepath
+
 
 HOT_UPDATE_LIST_JSON = "hot_update_list.json"
 
 
-def download_hot_update_list(res_version: str):
+def download_hot_update_list(res_version: str) -> Path:
     hot_update_list_filepath = Path(ASSET_DIRPATH, res_version, HOT_UPDATE_LIST_JSON)
 
     if hot_update_list_filepath.is_file():
-        return
+        return hot_update_list_filepath
 
     hot_update_list_url = (
         f"{ORIG_ASSET_URL_PREFIX}/{res_version}/{HOT_UPDATE_LIST_JSON}"
     )
 
     download_file(hot_update_list_url, hot_update_list_filepath)
+
+    return hot_update_list_filepath

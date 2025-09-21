@@ -71,3 +71,16 @@ def download_asset(res_version: str, asset_rel_filepath: Path):
 
     with ZipFile(asset_dat_filepath) as zf:
         asset_filepath.write_bytes(zf.read(asset_rel_filepath.as_posix()))
+
+
+HOT_UPDATE_LIST_JSON = "hot_update_list.json"
+
+
+def download_hot_update_list(res_version: str):
+    hot_update_list_filepath = Path(ASSET_DIRPATH, res_version, HOT_UPDATE_LIST_JSON)
+
+    hot_update_list_url = (
+        f"{ORIG_ASSET_URL_PREFIX}/{res_version}/{HOT_UPDATE_LIST_JSON}"
+    )
+
+    download_file(hot_update_list_url, hot_update_list_filepath)

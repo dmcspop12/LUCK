@@ -5,7 +5,7 @@ description = ""
 authors = [{ name = "Your Name", email = "you@example.com" }]
 readme = "README.md"
 requires-python = ">=3.12,<4.0"
-dependencies = []
+dependencies = ["unitypy @ git+https://github.com/pfyy/UnityPy.git@master"]
 
 [tool.poetry]
 packages = [{ include = "openbachelorm", from = "src" }]

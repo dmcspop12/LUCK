@@ -1,6 +1,7 @@
 import subprocess
 from pathlib import Path
 from uuid import uuid4
+from zipfile import ZipFile
 
 from .const import TMP_DIRPATH, ASSET_DIRPATH
 
@@ -64,3 +65,6 @@ def download_asset(res_version: str, asset_rel_filepath: Path):
     asset_dat_filepath = asset_filepath.with_suffix(".dat")
 
     download_file(asset_dat_url, asset_dat_filepath)
+
+    with ZipFile(asset_dat_filepath) as zf:
+        asset_filepath.write_bytes(zf.read(asset_rel_filepath.as_posix()))

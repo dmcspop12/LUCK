@@ -58,6 +58,9 @@ def get_asset_dat_url(res_version: str, asset_rel_filepath: Path):
 def download_asset(res_version: str, asset_rel_filepath: Path):
     asset_filepath = Path(ASSET_DIRPATH) / res_version / asset_rel_filepath
 
+    if asset_filepath.is_file():
+        return
+
     asset_filepath.parent.mkdir(parents=True, exist_ok=True)
 
     asset_dat_url = get_asset_dat_url(res_version, asset_rel_filepath)

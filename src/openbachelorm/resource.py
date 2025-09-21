@@ -1,5 +1,7 @@
 import json
 from pathlib import Path
+import zipfile
+from zipfile import ZipFile
 
 import UnityPy
 
@@ -13,6 +15,7 @@ class Resource:
         self.res_version = res_version
 
         self.asset_dict = {}
+        self.modified_asset_set = set()
 
         self.load_hot_update_list()
 
@@ -39,3 +42,16 @@ class Resource:
                 continue
 
             self.load_asset(ab_name)
+
+    def mark_modified_asset(self, ab_name: str):
+        self.modified_asset_set.add(ab_name)
+
+    def build_mod(self, mod_name: str):
+        mod_filepath = Path(MOD_DIRPATH, mod_name + ".dat")
+
+        mod_filepath.parent.mkdir(parents=True, exist_ok=True)
+
+        with ZipFile(mod_filepath, "w", zipfile.ZIP_DEFLATED) as zf:
+            for ab_name in self.modified_asset_set:
+                asset_env = self.asset_dict[ab_name]
+                zf.writestr(ab_name, asset_env.file.save())

@@ -79,6 +79,9 @@ HOT_UPDATE_LIST_JSON = "hot_update_list.json"
 def download_hot_update_list(res_version: str):
     hot_update_list_filepath = Path(ASSET_DIRPATH, res_version, HOT_UPDATE_LIST_JSON)
 
+    if hot_update_list_filepath.is_file():
+        return
+
     hot_update_list_url = (
         f"{ORIG_ASSET_URL_PREFIX}/{res_version}/{HOT_UPDATE_LIST_JSON}"
     )

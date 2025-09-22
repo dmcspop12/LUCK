@@ -178,3 +178,36 @@ def decode_flatc(script_bytes: bytes, client_version: str, fbs_name: str) -> str
 
     finally:
         remove_flatc_tmp(tmp_filepath)
+
+
+def encode_flatc(json_str: str, client_version: str, fbs_name: str) -> bytes:
+    fbs_filepath = get_fbs_filepath(client_version, fbs_name)
+
+    tmp_filepath = get_tmp_filepath()
+
+    bin_tmp_filepath = get_bin_tmp_filepath(tmp_filepath)
+    json_tmp_filepath = get_json_tmp_filepath(tmp_filepath)
+
+    try:
+        json_tmp_filepath.write_text(json_str, "utf-8")
+
+        proc = subprocess.run(
+            [
+                "flatc",
+                "--strict-json",
+                "--natural-utf8",
+                "--binary",
+                "-o",
+                bin_tmp_filepath.parent.as_posix(),
+                fbs_filepath.as_posix(),
+                json_tmp_filepath.as_posix(),
+            ]
+        )
+
+        if proc.returncode:
+            raise ValueError(f"encode_flatc failed to encode {fbs_name}")
+
+        return bin_tmp_filepath.read_bytes()
+
+    finally:
+        remove_flatc_tmp(tmp_filepath)

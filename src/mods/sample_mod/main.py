@@ -10,6 +10,7 @@ from openbachelorm.helper import (
     remove_header,
     add_header,
     decode_flatc,
+    encode_flatc,
 )
 from openbachelorm.const import TMP_DIRPATH
 
@@ -39,6 +40,23 @@ def get_data_by_prefix(asset_env: UnityPy.Environment, prefix: str):
     return None
 
 
+def debug_dump(character_table):
+    with open(
+        Path(
+            TMP_DIRPATH,
+            "sample_mod.json",
+        ),
+        "w",
+        encoding="utf-8",
+    ) as f:
+        json.dump(
+            character_table,
+            f,
+            ensure_ascii=False,
+            indent=4,
+        )
+
+
 def main():
     res = Resource("2.6.41", "25-09-17-05-25-13_d72007")
 
@@ -66,22 +84,15 @@ def main():
     )
     character_table = json.loads(character_table_str)
 
-    with open(
-        Path(
-            TMP_DIRPATH,
-            f"{character_table_prefix}.json",
-        ),
-        "w",
-        encoding="utf-8",
-    ) as f:
-        json.dump(
-            character_table,
-            f,
-            ensure_ascii=False,
-            indent=4,
-        )
+    debug_dump(character_table)
 
-    data.m_Script = bytes_to_script(add_header(script_bytes))
+    new_character_table_str = json.dumps(character_table)
+
+    new_script_bytes = encode_flatc(
+        new_character_table_str, res.client_version, character_table_prefix
+    )
+
+    data.m_Script = bytes_to_script(add_header(new_script_bytes))
 
     data.save()
 

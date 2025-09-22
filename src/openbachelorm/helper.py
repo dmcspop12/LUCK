@@ -17,12 +17,18 @@ def remove_aria2_tmp(tmp_filepath: Path):
     aria2_tmp_filepath.unlink(missing_ok=True)
 
 
-def download_file(url: str, filepath: Path):
-    filepath.parent.mkdir(parents=True, exist_ok=True)
-
+def get_tmp_filepath():
     tmp_filepath = Path(TMP_DIRPATH, str(uuid4()))
 
     tmp_filepath.parent.mkdir(parents=True, exist_ok=True)
+
+    return tmp_filepath
+
+
+def download_file(url: str, filepath: Path):
+    filepath.parent.mkdir(parents=True, exist_ok=True)
+
+    tmp_filepath = get_tmp_filepath()
 
     try:
         proc = subprocess.run(
@@ -113,3 +119,62 @@ def remove_header(script_bytes: bytes) -> bytes:
 
 def add_header(script_bytes: bytes) -> bytes:
     return bytes(HEADER_SIZE) + script_bytes
+
+
+def get_bin_tmp_filepath(tmp_filepath):
+    return tmp_filepath.with_suffix(".bin")
+
+
+def get_json_tmp_filepath(tmp_filepath):
+    return tmp_filepath.with_suffix(".json")
+
+
+def remove_flatc_tmp(tmp_filepath: Path):
+    bin_tmp_filepath = get_bin_tmp_filepath(tmp_filepath)
+    json_tmp_filepath = get_json_tmp_filepath(tmp_filepath)
+
+    bin_tmp_filepath.unlink(missing_ok=True)
+    json_tmp_filepath.unlink(missing_ok=True)
+
+
+def get_fbs_filepath(client_version: str, fbs_name: str) -> Path:
+    return Path(
+        "fbs",
+        client_version,
+        f"{fbs_name}.fbs",
+    )
+
+
+def decode_flatc(script_bytes: bytes, client_version: str, fbs_name: str) -> str:
+    fbs_filepath = get_fbs_filepath(client_version, fbs_name)
+
+    tmp_filepath = get_tmp_filepath()
+
+    bin_tmp_filepath = get_bin_tmp_filepath(tmp_filepath)
+    json_tmp_filepath = get_json_tmp_filepath(tmp_filepath)
+
+    try:
+        bin_tmp_filepath.write_bytes(script_bytes)
+
+        proc = subprocess.run(
+            [
+                "flatc",
+                "--strict-json",
+                "--natural-utf8",
+                "--json",
+                "--raw-binary",
+                "-o",
+                json_tmp_filepath.parent.as_posix(),
+                fbs_filepath.as_posix(),
+                "--",
+                bin_tmp_filepath.as_posix(),
+            ]
+        )
+
+        if proc.returncode:
+            raise ValueError(f"decode_flatc failed to decode {fbs_name}")
+
+        return json_tmp_filepath.read_text("utf-8")
+
+    finally:
+        remove_flatc_tmp(tmp_filepath)

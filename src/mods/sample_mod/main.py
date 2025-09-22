@@ -8,6 +8,7 @@ from openbachelorm.helper import (
     bytes_to_script,
     remove_header,
     add_header,
+    decode_flatc,
 )
 
 
@@ -57,6 +58,10 @@ def main():
     data = get_data_by_prefix(character_table_asset_env, character_table_prefix)
 
     script_bytes = remove_header(script_to_bytes(data.m_Script))
+
+    character_table_str = decode_flatc(
+        script_bytes, res.client_version, character_table_prefix
+    )
 
     data.m_Script = bytes_to_script(add_header(script_bytes))
 

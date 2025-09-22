@@ -1,6 +1,14 @@
+from pathlib import Path
+
 import UnityPy
 
 from openbachelorm.resource import Resource
+from openbachelorm.helper import (
+    script_to_bytes,
+    bytes_to_script,
+    remove_header,
+    add_header,
+)
 
 
 def get_ab_name_by_prefix(res: Resource, ab_name_set: set[str], prefix: str):
@@ -47,6 +55,12 @@ def main():
     res.mark_modified_asset(character_table_ab_name)
 
     data = get_data_by_prefix(character_table_asset_env, character_table_prefix)
+
+    script_bytes = remove_header(script_to_bytes(data.m_Script))
+
+    data.m_Script = bytes_to_script(add_header(script_bytes))
+
+    data.save()
 
     res.build_mod("sample_mod")
 

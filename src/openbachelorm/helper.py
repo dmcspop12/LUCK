@@ -91,3 +91,25 @@ def download_hot_update_list(res_version: str) -> Path:
     download_file(hot_update_list_url, hot_update_list_filepath)
 
     return hot_update_list_filepath
+
+
+SURROGATE_ESCAPE = "surrogateescape"
+
+
+def script_to_bytes(script: str) -> bytes:
+    return script.encode("utf-8", SURROGATE_ESCAPE)
+
+
+def bytes_to_script(script_bytes: bytes) -> str:
+    return script_bytes.decode("utf-8", SURROGATE_ESCAPE)
+
+
+HEADER_SIZE = 0x80
+
+
+def remove_header(script_bytes: bytes) -> bytes:
+    return script_bytes[HEADER_SIZE:]
+
+
+def add_header(script_bytes: bytes) -> bytes:
+    return bytes(HEADER_SIZE) + script_bytes

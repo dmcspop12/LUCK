@@ -14,8 +14,8 @@ class Resource:
         self.client_version = client_version
         self.res_version = res_version
 
-        self.asset_dict = {}
-        self.modified_asset_set = set()
+        self.asset_dict: dict[str, UnityPy.Environment] = {}
+        self.modified_asset_set: set[str] = set()
 
         self.load_hot_update_list()
 
@@ -37,7 +37,12 @@ class Resource:
 
         self.asset_dict[ab_name] = asset_env
 
-    def load_anon_asset(self):
+    def get_asset_env(self, ab_name: str):
+        asset_env = self.asset_dict[ab_name]
+
+        return asset_env
+
+    def load_anon_asset(self) -> set[str]:
         ab_name_set = set()
 
         for ab_info in self.hot_update_list["abInfos"]:

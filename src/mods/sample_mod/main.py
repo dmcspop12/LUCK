@@ -62,8 +62,8 @@ def sample_mod(character_table):
         if char["key"] == "char_1035_wisdel":
             data = char["value"]["phases"][-1]["attributesKeyFrames"][-1]["data"]
 
-            data["maxHp"] *= 10
-            data["atk"] *= 10
+            data["maxHp"] *= 100
+            data["atk"] *= 100
 
 
 def main():

@@ -28,6 +28,9 @@ class Resource:
         self.hot_update_list = hot_update_list
 
     def load_asset(self, ab_name: str):
+        if ab_name in self.asset_dict:
+            return
+
         asset_filepath = download_asset(self.res_version, Path(ab_name))
 
         asset_env = UnityPy.load(asset_filepath.as_posix())
@@ -35,6 +38,8 @@ class Resource:
         self.asset_dict[ab_name] = asset_env
 
     def load_anon_asset(self):
+        ab_name_set = set()
+
         for ab_info in self.hot_update_list["abInfos"]:
             ab_name = ab_info["name"]
 
@@ -42,8 +47,14 @@ class Resource:
                 continue
 
             self.load_asset(ab_name)
+            ab_name_set.add(ab_name)
+
+        return ab_name_set
 
     def mark_modified_asset(self, ab_name: str):
+        if ab_name not in self.asset_dict:
+            raise KeyError(f"{ab_name} not loaded")
+
         self.modified_asset_set.add(ab_name)
 
     def build_mod(self, mod_name: str):

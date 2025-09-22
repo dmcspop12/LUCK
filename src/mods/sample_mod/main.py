@@ -57,6 +57,15 @@ def debug_dump(character_table):
         )
 
 
+def sample_mod(character_table):
+    for char in character_table["characters"]:
+        if char["key"] == "char_1035_wisdel":
+            data = char["value"]["phases"][-1]["attributesKeyFrames"][-1]["data"]
+
+            data["maxHp"] *= 10
+            data["atk"] *= 10
+
+
 def main():
     res = Resource("2.6.41", "25-09-17-05-25-13_d72007")
 
@@ -83,6 +92,8 @@ def main():
         script_bytes, res.client_version, character_table_prefix
     )
     character_table = json.loads(character_table_str)
+
+    sample_mod(character_table)
 
     debug_dump(character_table)
 

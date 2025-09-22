@@ -1,4 +1,5 @@
 from pathlib import Path
+import json
 
 import UnityPy
 
@@ -10,6 +11,7 @@ from openbachelorm.helper import (
     add_header,
     decode_flatc,
 )
+from openbachelorm.const import TMP_DIRPATH
 
 
 def get_ab_name_by_prefix(res: Resource, ab_name_set: set[str], prefix: str):
@@ -62,6 +64,22 @@ def main():
     character_table_str = decode_flatc(
         script_bytes, res.client_version, character_table_prefix
     )
+    character_table = json.loads(character_table_str)
+
+    with open(
+        Path(
+            TMP_DIRPATH,
+            f"{character_table_prefix}.json",
+        ),
+        "w",
+        encoding="utf-8",
+    ) as f:
+        json.dump(
+            character_table,
+            f,
+            ensure_ascii=False,
+            indent=4,
+        )
 
     data.m_Script = bytes_to_script(add_header(script_bytes))
 

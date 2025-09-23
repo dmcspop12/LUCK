@@ -88,7 +88,11 @@ def do_mod_character_table(character_table):
 
 
 def do_mod_skill_table(skill_table):
-    pass
+    for skill in skill_table["skills"]:
+        if skill["key"] == "skchr_wisdel_3":
+            data = skill["value"]["levels"][-1]
+
+            data["spData"]["spCost"] = 1
 
 
 def main():

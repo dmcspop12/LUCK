@@ -15,20 +15,6 @@ from openbachelorm.helper import (
 from openbachelorm.const import TMP_DIRPATH
 
 
-def get_ab_name_by_prefix(res: Resource, ab_name_set: set[str], prefix: str):
-    for ab_name in ab_name_set:
-        asset_env = res.get_asset_env(ab_name)
-
-        for obj in asset_env.objects:
-            if obj.type.name == "TextAsset":
-                data = obj.read()
-
-                if data.m_Name.startswith(prefix):
-                    return ab_name
-
-    return None
-
-
 def get_data_by_prefix(asset_env: UnityPy.Environment, prefix: str):
     for obj in asset_env.objects:
         if obj.type.name == "TextAsset":
@@ -69,13 +55,15 @@ def sample_mod(character_table):
 def main():
     res = Resource("2.6.41", "25-09-17-05-25-13_d72007")
 
-    ab_name_set = res.load_anon_asset()
+    res.load_anon_asset()
 
     character_table_prefix = "character_table"
 
-    character_table_ab_name = get_ab_name_by_prefix(
-        res, ab_name_set, character_table_prefix
-    )
+    character_table_ab_name = None
+    for anon_asset_name in res.anon_asset_name_dict:
+        if anon_asset_name.startswith(character_table_prefix):
+            character_table_ab_name = res.anon_asset_name_dict[anon_asset_name]
+            break
 
     if character_table_ab_name is None:
         raise FileNotFoundError(f"{character_table_prefix} not found")

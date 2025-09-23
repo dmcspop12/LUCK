@@ -9,6 +9,22 @@ from .helper import download_hot_update_list, download_asset
 from .const import TMP_DIRPATH, ASSET_DIRPATH, MOD_DIRPATH
 
 
+def get_anon_asset_name(asset_env: UnityPy.Environment):
+    anon_asset_name = None
+
+    for obj in asset_env.objects:
+        if obj.type.name == "TextAsset":
+            data = obj.read()
+
+            if anon_asset_name is None:
+                anon_asset_name = data.m_Name
+            else:
+                anon_asset_name = None
+                break
+
+    return anon_asset_name
+
+
 class Resource:
     def __init__(self, client_version: str, res_version: str):
         self.client_version = client_version
@@ -18,6 +34,7 @@ class Resource:
         self.modified_asset_set: set[str] = set()
 
         self.anon_ab_name_set: set[str] = None
+        self.anon_asset_name_dict: dict[str, str] = {}
 
         self.load_hot_update_list()
 
@@ -39,10 +56,23 @@ class Resource:
 
         self.asset_dict[ab_name] = asset_env
 
+        return asset_env
+
     def get_asset_env(self, ab_name: str):
         asset_env = self.asset_dict[ab_name]
 
         return asset_env
+
+    def register_anon_asset_name(self, ab_name: str, asset_env: UnityPy.Environment):
+        anon_asset_name = get_anon_asset_name(asset_env)
+
+        if anon_asset_name is None:
+            return
+
+        if anon_asset_name in self.anon_asset_name_dict:
+            raise KeyError(f"anon_asset_name {anon_asset_name} already registered")
+
+        self.anon_asset_name_dict[anon_asset_name] = ab_name
 
     def load_anon_asset(self) -> set[str]:
         if self.anon_ab_name_set is not None:
@@ -56,8 +86,10 @@ class Resource:
             if not ab_name.startswith("anon/"):
                 continue
 
-            self.load_asset(ab_name)
+            asset_env = self.load_asset(ab_name)
             self.anon_ab_name_set.add(ab_name)
+
+            self.register_anon_asset_name(ab_name, asset_env)
 
         return self.anon_ab_name_set
 

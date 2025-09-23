@@ -17,6 +17,8 @@ class Resource:
         self.asset_dict: dict[str, UnityPy.Environment] = {}
         self.modified_asset_set: set[str] = set()
 
+        self.anon_ab_name_set: set[str] = None
+
         self.load_hot_update_list()
 
     def load_hot_update_list(self):
@@ -43,7 +45,10 @@ class Resource:
         return asset_env
 
     def load_anon_asset(self) -> set[str]:
-        ab_name_set = set()
+        if self.anon_ab_name_set is not None:
+            return self.anon_ab_name_set
+
+        self.anon_ab_name_set = set()
 
         for ab_info in self.hot_update_list["abInfos"]:
             ab_name = ab_info["name"]
@@ -52,9 +57,9 @@ class Resource:
                 continue
 
             self.load_asset(ab_name)
-            ab_name_set.add(ab_name)
+            self.anon_ab_name_set.add(ab_name)
 
-        return ab_name_set
+        return self.anon_ab_name_set
 
     def mark_modified_asset(self, ab_name: str):
         if ab_name not in self.asset_dict:

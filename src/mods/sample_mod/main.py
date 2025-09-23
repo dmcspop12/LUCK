@@ -62,6 +62,7 @@ def mod_table(res: Resource, prefix: str, do_mod_func):
     script_bytes = remove_header(script_to_bytes(data.m_Script))
 
     table_str = decode_flatc(script_bytes, res.client_version, prefix)
+
     table = json.loads(table_str)
 
     do_mod_func(table)
@@ -86,12 +87,17 @@ def do_mod_character_table(character_table):
             data["atk"] *= 100
 
 
+def do_mod_skill_table(skill_table):
+    pass
+
+
 def main():
     res = Resource("2.6.41", "25-09-17-05-25-13_d72007")
 
     res.load_anon_asset()
 
     mod_table(res, "character_table", do_mod_character_table)
+    mod_table(res, "skill_table", do_mod_skill_table)
 
     res.build_mod("sample_mod")
 

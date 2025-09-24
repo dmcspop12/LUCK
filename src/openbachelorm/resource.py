@@ -9,20 +9,16 @@ from .helper import download_hot_update_list, download_asset
 from .const import TMP_DIRPATH, ASSET_DIRPATH, MOD_DIRPATH
 
 
-def get_anon_asset_name(asset_env: UnityPy.Environment):
-    anon_asset_name = None
+def get_anon_asset_name_set(asset_env: UnityPy.Environment):
+    anon_asset_name_set: set[str] = set()
 
     for obj in asset_env.objects:
         if obj.type.name == "TextAsset":
             data = obj.read()
 
-            if anon_asset_name is None:
-                anon_asset_name = data.m_Name
-            else:
-                anon_asset_name = None
-                break
+            anon_asset_name_set.add(data.m_Name)
 
-    return anon_asset_name
+    return anon_asset_name_set
 
 
 class Resource:
@@ -64,15 +60,17 @@ class Resource:
         return asset_env
 
     def register_anon_asset_name(self, ab_name: str, asset_env: UnityPy.Environment):
-        anon_asset_name = get_anon_asset_name(asset_env)
+        anon_asset_name_set = get_anon_asset_name_set(asset_env)
 
-        if anon_asset_name is None:
-            return
+        for anon_asset_name in anon_asset_name_set:
+            if anon_asset_name in self.anon_asset_name_dict:
+                print(f"warn: anon_asset_name {anon_asset_name} already registered")
+                print(
+                    f"old: {self.anon_asset_name_dict[anon_asset_name]}, new: {ab_name}"
+                )
+                continue
 
-        if anon_asset_name in self.anon_asset_name_dict:
-            raise KeyError(f"anon_asset_name {anon_asset_name} already registered")
-
-        self.anon_asset_name_dict[anon_asset_name] = ab_name
+            self.anon_asset_name_dict[anon_asset_name] = ab_name
 
     def load_anon_asset(self) -> set[str]:
         if self.anon_ab_name_set is not None:

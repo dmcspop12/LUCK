@@ -86,6 +86,8 @@ def do_mod_character_table(character_table):
             data["maxHp"] *= 100
             data["atk"] *= 100
 
+            data["cost"] = 1
+
 
 def do_mod_skill_table(skill_table):
     for skill in skill_table["skills"]:

@@ -3,6 +3,9 @@ from pathlib import Path
 from uuid import uuid4
 from zipfile import ZipFile
 
+from Crypto.Cipher import AES
+from Crypto.Util.Padding import pad, unpad
+
 from .const import TMP_DIRPATH, ASSET_DIRPATH
 
 
@@ -213,3 +216,30 @@ def encode_flatc(json_str: str, client_version: str, fbs_name: str) -> bytes:
 
     finally:
         remove_flatc_tmp(tmp_filepath)
+
+
+AES_KEY = b"UITpAi82pHAWwnzq"
+
+AES_IV_MASK = b"HRMCwPonJLIB3WCl"
+
+
+def get_iv(data: bytes) -> bytes:
+    return bytes([i ^ j for i, j in zip(data, AES_IV_MASK)])
+
+
+def decrypt_data(data: bytes) -> bytes:
+    iv = get_iv(data)
+
+    cipher = AES.new(AES_KEY, AES.MODE_CBC, iv=iv)
+
+    return unpad(cipher.decrypt(data[len(AES_IV_MASK) :]), AES.block_size)
+
+
+def encrypt_data(data: bytes) -> bytes:
+    header = bytes(len(AES_IV_MASK))
+
+    iv = get_iv(header)
+
+    cipher = AES.new(AES_KEY, AES.MODE_CBC, iv=iv)
+
+    return header + cipher.encrypt(pad(data, AES.block_size))

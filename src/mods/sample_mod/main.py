@@ -95,8 +95,8 @@ def do_mod_skill_table(skill_table):
             data["spData"]["spCost"] = 1
 
 
-def main():
-    res = Resource("2.6.41", "25-09-17-05-25-13_d72007")
+def build_sample_mod(client_version: str, res_version: str):
+    res = Resource(client_version, res_version)
 
     res.load_anon_asset()
 
@@ -104,6 +104,10 @@ def main():
     mod_table(res, "skill_table", do_mod_skill_table)
 
     res.build_mod("sample_mod")
+
+
+def main():
+    build_sample_mod("2.6.41", "25-09-17-05-25-13_d72007")
 
 
 if __name__ == "__main__":

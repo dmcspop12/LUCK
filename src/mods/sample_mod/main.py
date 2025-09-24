@@ -74,6 +74,17 @@ def do_mod_skill_table(skill_table):
 
 
 def do_mod_range_table(range_table):
+    range_table["3-9"]["grids"] = []
+
+    for row in range(4, -5, -1):
+        for col in range(0, 7):
+            range_table["3-9"]["grids"].append(
+                {
+                    "row": row,
+                    "col": col,
+                },
+            )
+
     return range_table
 
 

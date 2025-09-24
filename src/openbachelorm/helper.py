@@ -321,3 +321,19 @@ def dump_table_decorator(name: str):
         return wrapper
 
     return _dump_table_decorator
+
+
+def crypt_decorator(func):
+    @wraps(func)
+    def wrapper(data):
+        return encrypt_data(func(decrypt_data(data)))
+
+    return wrapper
+
+
+def encoding_decorator(func):
+    @wraps(func)
+    def wrapper(data):
+        return func(data.decode("utf-8")).encode("utf-8")
+
+    return wrapper

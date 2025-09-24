@@ -10,6 +10,8 @@ from openbachelorm.helper import (
     flatc_decorator,
     json_decorator,
     dump_table_decorator,
+    crypt_decorator,
+    encoding_decorator,
 )
 
 
@@ -71,6 +73,10 @@ def do_mod_skill_table(skill_table):
     return skill_table
 
 
+def do_mod_range_table(range_table):
+    return range_table
+
+
 def build_sample_mod(client_version: str, res_version: str):
     res = Resource(client_version, res_version)
 
@@ -98,6 +104,19 @@ def build_sample_mod(client_version: str, res_version: str):
             flatc_decorator(client_version, "skill_table"),
             json_decorator,
             dump_table_decorator("skill_table"),
+        ],
+    )
+    mod_table(
+        res,
+        "range_table",
+        do_mod_range_table,
+        [
+            script_decorator,
+            header_decorator,
+            crypt_decorator,
+            encoding_decorator,
+            json_decorator,
+            dump_table_decorator("range_table"),
         ],
     )
 

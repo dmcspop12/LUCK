@@ -47,7 +47,7 @@ def mod_table(res: Resource, prefix: str, do_mod_func):
     table_ab_name = None
     for anon_asset_name in res.anon_asset_name_dict:
         if anon_asset_name.startswith(prefix):
-            table_ab_name = res.anon_asset_name_dict[anon_asset_name]
+            table_ab_name = next(iter(res.anon_asset_name_dict[anon_asset_name]))
             break
 
     if table_ab_name is None:

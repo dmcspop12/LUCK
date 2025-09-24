@@ -30,7 +30,7 @@ class Resource:
         self.modified_asset_set: set[str] = set()
 
         self.anon_ab_name_set: set[str] = None
-        self.anon_asset_name_dict: dict[str, str] = {}
+        self.anon_asset_name_dict: dict[str, set[str]] = {}
 
         self.load_hot_update_list()
 
@@ -63,14 +63,10 @@ class Resource:
         anon_asset_name_set = get_anon_asset_name_set(asset_env)
 
         for anon_asset_name in anon_asset_name_set:
-            if anon_asset_name in self.anon_asset_name_dict:
-                print(f"warn: anon_asset_name {anon_asset_name} already registered")
-                print(
-                    f"old: {self.anon_asset_name_dict[anon_asset_name]}, new: {ab_name}"
-                )
-                continue
+            if anon_asset_name not in self.anon_asset_name_dict:
+                self.anon_asset_name_dict[anon_asset_name] = set()
 
-            self.anon_asset_name_dict[anon_asset_name] = ab_name
+            self.anon_asset_name_dict[anon_asset_name].add(ab_name)
 
     def load_anon_asset(self) -> set[str]:
         if self.anon_ab_name_set is not None:

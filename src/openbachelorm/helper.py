@@ -2,6 +2,8 @@ import subprocess
 from pathlib import Path
 from uuid import uuid4
 from zipfile import ZipFile
+import json
+from functools import wraps
 
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad, unpad
@@ -243,3 +245,79 @@ def encrypt_data(data: bytes) -> bytes:
     cipher = AES.new(AES_KEY, AES.MODE_CBC, iv=iv)
 
     return header + cipher.encrypt(pad(data, AES.block_size))
+
+
+def script_decorator(func):
+    @wraps(func)
+    def wrapper(data):
+        return bytes_to_script(func(script_to_bytes(data)))
+
+    return wrapper
+
+
+def header_decorator(func):
+    @wraps(func)
+    def wrapper(data):
+        return add_header(func(remove_header(data)))
+
+    return wrapper
+
+
+def flatc_decorator(client_version: str, fbs_name: str):
+    def _flatc_decorator(func):
+        @wraps(func)
+        def wrapper(data):
+            return encode_flatc(
+                func(
+                    decode_flatc(
+                        data,
+                        client_version,
+                        fbs_name,
+                    )
+                ),
+                client_version,
+                fbs_name,
+            )
+
+        return wrapper
+
+    return _flatc_decorator
+
+
+def json_decorator(func):
+    @wraps(func)
+    def wrapper(data):
+        return json.dumps(func(json.loads(data)), ensure_ascii=False)
+
+    return wrapper
+
+
+def dump_table(table, dump_filename: str):
+    with open(
+        Path(
+            TMP_DIRPATH,
+            dump_filename,
+        ),
+        "w",
+        encoding="utf-8",
+    ) as f:
+        json.dump(
+            table,
+            f,
+            ensure_ascii=False,
+            indent=4,
+        )
+
+
+def dump_table_decorator(name: str):
+    def _dump_table_decorator(func):
+        @wraps(func)
+        def wrapper(data):
+            dump_table(data, f"{name}_pre.json")
+            data = func(data)
+            dump_table(data, f"{name}_post.json")
+            return data
+
+        return wrapper
+
+    return _dump_table_decorator

@@ -5,14 +5,12 @@ import UnityPy
 
 from openbachelorm.resource import Resource
 from openbachelorm.helper import (
-    script_to_bytes,
-    bytes_to_script,
-    remove_header,
-    add_header,
-    decode_flatc,
-    encode_flatc,
+    script_decorator,
+    header_decorator,
+    flatc_decorator,
+    json_decorator,
+    dump_table_decorator,
 )
-from openbachelorm.const import TMP_DIRPATH
 
 
 def get_data_by_prefix(asset_env: UnityPy.Environment, prefix: str):
@@ -26,24 +24,7 @@ def get_data_by_prefix(asset_env: UnityPy.Environment, prefix: str):
     return None
 
 
-def debug_dump(table, prefix: str):
-    with open(
-        Path(
-            TMP_DIRPATH,
-            f"sample_mod_{prefix}.json",
-        ),
-        "w",
-        encoding="utf-8",
-    ) as f:
-        json.dump(
-            table,
-            f,
-            ensure_ascii=False,
-            indent=4,
-        )
-
-
-def mod_table(res: Resource, prefix: str, do_mod_func):
+def mod_table(res: Resource, prefix: str, do_mod_func, decorator_lst):
     table_ab_name = None
     for anon_asset_name in res.anon_asset_name_dict:
         if anon_asset_name.startswith(prefix):
@@ -59,21 +40,10 @@ def mod_table(res: Resource, prefix: str, do_mod_func):
 
     data = get_data_by_prefix(table_asset_env, prefix)
 
-    script_bytes = remove_header(script_to_bytes(data.m_Script))
+    for decorator in reversed(decorator_lst):
+        do_mod_func = decorator(do_mod_func)
 
-    table_str = decode_flatc(script_bytes, res.client_version, prefix)
-
-    table = json.loads(table_str)
-
-    do_mod_func(table)
-
-    debug_dump(table, prefix)
-
-    new_table_str = json.dumps(table)
-
-    new_script_bytes = encode_flatc(new_table_str, res.client_version, prefix)
-
-    data.m_Script = bytes_to_script(add_header(new_script_bytes))
+    data.m_Script = do_mod_func(data.m_Script)
 
     data.save()
 
@@ -88,6 +58,8 @@ def do_mod_character_table(character_table):
 
             data["cost"] = 1
 
+    return character_table
+
 
 def do_mod_skill_table(skill_table):
     for skill in skill_table["skills"]:
@@ -96,14 +68,38 @@ def do_mod_skill_table(skill_table):
 
             data["spData"]["spCost"] = 1
 
+    return skill_table
+
 
 def build_sample_mod(client_version: str, res_version: str):
     res = Resource(client_version, res_version)
 
     res.load_anon_asset()
 
-    mod_table(res, "character_table", do_mod_character_table)
-    mod_table(res, "skill_table", do_mod_skill_table)
+    mod_table(
+        res,
+        "character_table",
+        do_mod_character_table,
+        [
+            script_decorator,
+            header_decorator,
+            flatc_decorator(client_version, "character_table"),
+            json_decorator,
+            dump_table_decorator("character_table"),
+        ],
+    )
+    mod_table(
+        res,
+        "skill_table",
+        do_mod_skill_table,
+        [
+            script_decorator,
+            header_decorator,
+            flatc_decorator(client_version, "skill_table"),
+            json_decorator,
+            dump_table_decorator("skill_table"),
+        ],
+    )
 
     res.build_mod("sample_mod")
 

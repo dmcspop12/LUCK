@@ -483,5 +483,12 @@ def get_known_table_decorator_lst(
                 dump_table_decorator(f"{table_name.value}_{res_version}"),
             ]
 
+        case KnownTable.BUFF_TEMPLATE_DATA:
+            return [
+                script_decorator,
+                bson_decorator,
+                dump_table_decorator(f"{table_name.value}_{res_version}"),
+            ]
+
         case _:
             raise ValueError(f"unsupported table_name {table_name}")

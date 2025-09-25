@@ -22,10 +22,14 @@ def remove_aria2_tmp(tmp_filepath: Path):
     aria2_tmp_filepath.unlink(missing_ok=True)
 
 
-def get_tmp_filepath():
-    tmp_filepath = Path(TMP_DIRPATH, str(uuid4()))
+def ensure_tmp_dir():
+    Path(TMP_DIRPATH).mkdir(parents=True, exist_ok=True)
 
-    tmp_filepath.parent.mkdir(parents=True, exist_ok=True)
+
+def get_tmp_filepath():
+    ensure_tmp_dir()
+
+    tmp_filepath = Path(TMP_DIRPATH, str(uuid4()))
 
     return tmp_filepath
 
@@ -293,6 +297,8 @@ def json_decorator(func):
 
 
 def dump_table(table, dump_filename: str):
+    ensure_tmp_dir()
+
     with open(
         Path(
             TMP_DIRPATH,
@@ -344,6 +350,8 @@ def nop_mod_table_func(table):
 
 
 def raw_dump(data: bytes | str, dump_filename: str):
+    ensure_tmp_dir()
+
     dump_filepath = Path(
         TMP_DIRPATH,
         dump_filename,

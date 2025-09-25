@@ -341,3 +341,31 @@ def encoding_decorator(func):
 
 def nop_mod_table_func(table):
     return table
+
+
+def raw_dump(data: bytes | str, dump_filename: str):
+    dump_filepath = Path(
+        TMP_DIRPATH,
+        dump_filename,
+    )
+    if isinstance(data, bytes):
+        dump_filepath = dump_filepath.with_suffix(".bin")
+        dump_filepath.write_bytes(data)
+    elif isinstance(data, str):
+        dump_filepath = dump_filepath.with_suffix(".txt")
+        dump_filepath.write_text(data, "utf-8", SURROGATE_ESCAPE)
+    return data
+
+
+def raw_dump_decorator(name: str):
+    def _raw_dump_decorator(func):
+        @wraps(func)
+        def wrapper(data):
+            raw_dump(data, f"{name}_pre")
+            data = func(data)
+            raw_dump(data, f"{name}_post")
+            return data
+
+        return wrapper
+
+    return _raw_dump_decorator

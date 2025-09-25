@@ -59,7 +59,6 @@ def build_sample_mod(client_version: str, res_version: str):
     res.load_anon_asset()
 
     res.mod_table(
-        res,
         "character_table",
         do_mod_character_table,
         [
@@ -71,7 +70,6 @@ def build_sample_mod(client_version: str, res_version: str):
         ],
     )
     res.mod_table(
-        res,
         "skill_table",
         do_mod_skill_table,
         [
@@ -83,7 +81,6 @@ def build_sample_mod(client_version: str, res_version: str):
         ],
     )
     res.mod_table(
-        res,
         "range_table",
         do_mod_range_table,
         [

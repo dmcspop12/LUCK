@@ -64,4 +64,6 @@ class KnownTable(StrEnum):
     TOKEN_TABLE = "token_table"
     UNIEQUIP_TABLE = "uniequip_table"
     ZONE_TABLE = "zone_table"
+
     RANGE_TABLE = "range_table"
+    SANDBOX_TABLE = "sandbox_table"

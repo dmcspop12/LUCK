@@ -457,7 +457,7 @@ def get_known_table_decorator_lst(
                 dump_table_decorator(f"{table_name.value}_{res_version}"),
             ]
 
-        case KnownTable.RANGE_TABLE:
+        case KnownTable.SANDBOX_TABLE | KnownTable.RANGE_TABLE:
             return [
                 script_decorator,
                 header_decorator,

@@ -467,5 +467,14 @@ def get_known_table_decorator_lst(
                 dump_table_decorator(f"{table_name.value}_{res_version}"),
             ]
 
+        case KnownTable.BATTLE_MISC_TABLE:
+            return [
+                script_decorator,
+                header_decorator,
+                crypt_decorator,
+                bson_decorator,
+                dump_table_decorator(f"{table_name.value}_{res_version}"),
+            ]
+
         case _:
             raise ValueError(f"unsupported table_name {table_name}")

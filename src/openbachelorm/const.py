@@ -67,3 +67,5 @@ class KnownTable(StrEnum):
 
     RANGE_TABLE = "range_table"
     SANDBOX_TABLE = "sandbox_table"
+
+    BATTLE_MISC_TABLE = "battle_misc_table"

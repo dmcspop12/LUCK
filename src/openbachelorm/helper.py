@@ -8,6 +8,7 @@ from functools import wraps
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad, unpad
 import bson
+from packaging.version import Version
 
 from .const import TMP_DIRPATH, ASSET_DIRPATH, KnownTable
 
@@ -500,3 +501,30 @@ def get_known_table_decorator_lst(
 
         case _:
             raise ValueError(f"unsupported table_name {table_name}")
+
+
+def is_known_table_available(table_name: KnownTable, client_version: str):
+    match table_name:
+        case (
+            KnownTable.CLUE_DATA
+            | KnownTable.CRISIS_TABLE
+            | KnownTable.CRISIS_V2_TABLE
+            | KnownTable.DISPLAY_META_TABLE
+            | KnownTable.HANDBOOK_TEAM_TABLE
+            | KnownTable.INIT_TEXT
+            | KnownTable.LEGION_MODE_BUFF_TABLE
+            | KnownTable.MAIN_TEXT
+            | KnownTable.META_UI_TABLE
+        ):
+            if Version(client_version) < Version("2.5.04"):
+                return False
+
+        case KnownTable.CHAR_MASTER_TABLE | KnownTable.SPECIAL_OPERATOR_TABLE:
+            if Version(client_version) < Version("2.6.01"):
+                return False
+
+        case KnownTable.LEVEL_SCRIPT_TABLE:
+            if Version(client_version) < Version("2.6.21"):
+                return False
+
+    return True

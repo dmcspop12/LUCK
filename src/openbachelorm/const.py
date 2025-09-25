@@ -75,3 +75,5 @@ class KnownTable(StrEnum):
     BATTLE_MISC_TABLE = "battle_misc_table"
 
     BUFF_TEMPLATE_DATA = "buff_template_data"
+
+    DATA_VERSION = "data_version"

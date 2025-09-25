@@ -490,5 +490,12 @@ def get_known_table_decorator_lst(
                 dump_table_decorator(f"{table_name.value}_{res_version}"),
             ]
 
+        case KnownTable.DATA_VERSION:
+            return [
+                script_decorator,
+                encoding_decorator,
+                raw_dump_decorator(f"{table_name.value}_{res_version}"),
+            ]
+
         case _:
             raise ValueError(f"unsupported table_name {table_name}")

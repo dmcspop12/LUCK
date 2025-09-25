@@ -8,6 +8,7 @@ from openbachelorm.helper import (
     crypt_decorator,
     encoding_decorator,
     raw_dump_decorator,
+    bson_decorator,
     nop_mod_table_func,
 )
 

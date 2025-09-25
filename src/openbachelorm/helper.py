@@ -7,6 +7,7 @@ from functools import wraps
 
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad, unpad
+import bson
 
 from .const import TMP_DIRPATH, ASSET_DIRPATH
 
@@ -376,3 +377,11 @@ def raw_dump_decorator(name: str):
         return wrapper
 
     return _raw_dump_decorator
+
+
+def bson_decorator(func):
+    @wraps(func)
+    def wrapper(data):
+        return bson.encode(func(bson.decode(data)))
+
+    return wrapper

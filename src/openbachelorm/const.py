@@ -71,6 +71,7 @@ class KnownTable(StrEnum):
     ROGUELIKE_TABLE = "roguelike_table"
     SANDBOX_TABLE = "sandbox_table"
     TECH_BUFF_TABLE = "tech_buff_table"
+    UNIEQUIP_DATA = "uniequip_data"
 
     BATTLE_MISC_TABLE = "battle_misc_table"
 

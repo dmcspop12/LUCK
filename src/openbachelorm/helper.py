@@ -464,6 +464,7 @@ def get_known_table_decorator_lst(
             | KnownTable.ROGUELIKE_TABLE
             | KnownTable.SANDBOX_TABLE
             | KnownTable.TECH_BUFF_TABLE
+            | KnownTable.UNIEQUIP_DATA
         ):
             return [
                 script_decorator,

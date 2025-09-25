@@ -457,7 +457,14 @@ def get_known_table_decorator_lst(
                 dump_table_decorator(f"{table_name.value}_{res_version}"),
             ]
 
-        case KnownTable.SANDBOX_TABLE | KnownTable.RANGE_TABLE:
+        case (
+            KnownTable.HANDBOOK_TABLE
+            | KnownTable.PLAYER_AVATAR_TABLE
+            | KnownTable.RANGE_TABLE
+            | KnownTable.ROGUELIKE_TABLE
+            | KnownTable.SANDBOX_TABLE
+            | KnownTable.TECH_BUFF_TABLE
+        ):
             return [
                 script_decorator,
                 header_decorator,

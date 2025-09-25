@@ -57,7 +57,7 @@ def build_sample_mod(client_version: str, res_version: str):
         KnownTable.SKILL_TABLE.value,
         do_mod_skill_table,
         get_known_table_decorator_lst(
-            KnownTable.CHARACTER_TABLE, client_version, res_version
+            KnownTable.SKILL_TABLE, client_version, res_version
         ),
     )
     res.mod_table(

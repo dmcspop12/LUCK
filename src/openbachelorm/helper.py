@@ -354,7 +354,6 @@ def raw_dump(data: bytes | str, dump_filename: str):
     elif isinstance(data, str):
         dump_filepath = dump_filepath.with_suffix(".txt")
         dump_filepath.write_text(data, "utf-8", SURROGATE_ESCAPE)
-    return data
 
 
 def raw_dump_decorator(name: str):

@@ -21,6 +21,17 @@ def get_anon_asset_name_set(asset_env: UnityPy.Environment):
     return anon_asset_name_set
 
 
+def get_table_data_by_prefix(asset_env: UnityPy.Environment, table_prefix: str):
+    for obj in asset_env.objects:
+        if obj.type.name == "TextAsset":
+            data = obj.read()
+
+            if data.m_Name.startswith(table_prefix):
+                return data
+
+    return None
+
+
 class Resource:
     def __init__(self, client_version: str, res_version: str):
         self.client_version = client_version
@@ -102,3 +113,26 @@ class Resource:
             for ab_name in self.modified_asset_set:
                 asset_env = self.asset_dict[ab_name]
                 zf.writestr(ab_name, asset_env.file.save())
+
+    def mod_table(self, table_prefix: str, mod_table_func, decorator_lst):
+        table_ab_name = None
+        for anon_asset_name in self.anon_asset_name_dict:
+            if anon_asset_name.startswith(table_prefix):
+                table_ab_name = next(iter(self.anon_asset_name_dict[anon_asset_name]))
+                break
+
+        if table_ab_name is None:
+            raise FileNotFoundError(f"{table_prefix} not found")
+
+        table_asset_env = self.get_asset_env(table_ab_name)
+
+        self.mark_modified_asset(table_ab_name)
+
+        data = get_table_data_by_prefix(table_asset_env, table_prefix)
+
+        for decorator in reversed(decorator_lst):
+            mod_table_func = decorator(mod_table_func)
+
+        data.m_Script = mod_table_func(data.m_Script)
+
+        data.save()

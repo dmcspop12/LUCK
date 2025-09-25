@@ -1,8 +1,3 @@
-from pathlib import Path
-import json
-
-import UnityPy
-
 from openbachelorm.resource import Resource
 from openbachelorm.helper import (
     script_decorator,
@@ -12,6 +7,8 @@ from openbachelorm.helper import (
     dump_table_decorator,
     crypt_decorator,
     encoding_decorator,
+    raw_dump_decorator,
+    nop_mod_table_func,
 )
 
 

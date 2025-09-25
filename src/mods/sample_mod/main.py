@@ -1,16 +1,6 @@
 from openbachelorm.resource import Resource
-from openbachelorm.helper import (
-    script_decorator,
-    header_decorator,
-    flatc_decorator,
-    json_decorator,
-    dump_table_decorator,
-    crypt_decorator,
-    encoding_decorator,
-    raw_dump_decorator,
-    bson_decorator,
-    nop_mod_table_func,
-)
+from openbachelorm.helper import get_known_table_decorator_lst
+from openbachelorm.const import KnownTable
 
 
 def do_mod_character_table(character_table):
@@ -57,38 +47,25 @@ def build_sample_mod(client_version: str, res_version: str):
     res.load_anon_asset()
 
     res.mod_table(
-        "character_table",
+        KnownTable.CHARACTER_TABLE.value,
         do_mod_character_table,
-        [
-            script_decorator,
-            header_decorator,
-            flatc_decorator(client_version, "character_table"),
-            json_decorator,
-            dump_table_decorator(f"character_table_{res_version}"),
-        ],
+        get_known_table_decorator_lst(
+            KnownTable.CHARACTER_TABLE, client_version, res_version
+        ),
     )
     res.mod_table(
-        "skill_table",
+        KnownTable.SKILL_TABLE.value,
         do_mod_skill_table,
-        [
-            script_decorator,
-            header_decorator,
-            flatc_decorator(client_version, "skill_table"),
-            json_decorator,
-            dump_table_decorator(f"skill_table_{res_version}"),
-        ],
+        get_known_table_decorator_lst(
+            KnownTable.CHARACTER_TABLE, client_version, res_version
+        ),
     )
     res.mod_table(
-        "range_table",
+        KnownTable.RANGE_TABLE.value,
         do_mod_range_table,
-        [
-            script_decorator,
-            header_decorator,
-            crypt_decorator,
-            encoding_decorator,
-            json_decorator,
-            dump_table_decorator(f"range_table_{res_version}"),
-        ],
+        get_known_table_decorator_lst(
+            KnownTable.RANGE_TABLE, client_version, res_version
+        ),
     )
 
     res.build_mod("sample_mod")

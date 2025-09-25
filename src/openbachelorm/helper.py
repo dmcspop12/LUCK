@@ -9,7 +9,7 @@ from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad, unpad
 import bson
 
-from .const import TMP_DIRPATH, ASSET_DIRPATH
+from .const import TMP_DIRPATH, ASSET_DIRPATH, KnownTable
 
 
 ORIG_ASSET_URL_PREFIX = "https://ak.hycdn.cn/assetbundle/official/Android/assets"
@@ -385,3 +385,30 @@ def bson_decorator(func):
         return bson.encode(func(bson.decode(data)))
 
     return wrapper
+
+
+def get_known_table_decorator_lst(
+    table_name: KnownTable, client_version: str, res_version: str
+):
+    match table_name:
+        case KnownTable.CHARACTER_TABLE | KnownTable.SKILL_TABLE:
+            return [
+                script_decorator,
+                header_decorator,
+                flatc_decorator(client_version, table_name.value),
+                json_decorator,
+                dump_table_decorator(f"{table_name.value}_{res_version}"),
+            ]
+
+        case KnownTable.RANGE_TABLE:
+            return [
+                script_decorator,
+                header_decorator,
+                crypt_decorator,
+                encoding_decorator,
+                json_decorator,
+                dump_table_decorator(f"{table_name.value}_{res_version}"),
+            ]
+
+        case _:
+            raise ValueError(f"unsupported table_name {table_name}")

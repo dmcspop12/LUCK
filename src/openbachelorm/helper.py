@@ -391,7 +391,64 @@ def get_known_table_decorator_lst(
     table_name: KnownTable, client_version: str, res_version: str
 ):
     match table_name:
-        case KnownTable.CHARACTER_TABLE | KnownTable.SKILL_TABLE:
+        case (
+            KnownTable.ACTIVITY_TABLE
+            | KnownTable.AUDIO_DATA
+            | KnownTable.BATTLE_EQUIP_TABLE
+            | KnownTable.BUFF_TABLE
+            | KnownTable.BUILDING_DATA
+            | KnownTable.BUILDING_LOCAL_DATA
+            | KnownTable.CAMPAIGN_TABLE
+            | KnownTable.CHAPTER_TABLE
+            | KnownTable.CHARACTER_TABLE
+            | KnownTable.CHARM_TABLE
+            | KnownTable.CHARWORD_TABLE
+            | KnownTable.CHAR_MASTER_TABLE
+            | KnownTable.CHAR_META_TABLE
+            | KnownTable.CHAR_PATCH_TABLE
+            | KnownTable.CHECKIN_TABLE
+            | KnownTable.CLIMB_TOWER_TABLE
+            | KnownTable.CLUE_DATA
+            | KnownTable.COOPERATE_BATTLE_TABLE
+            | KnownTable.CRISIS_TABLE
+            | KnownTable.CRISIS_V2_TABLE
+            | KnownTable.DISPLAY_META_TABLE
+            | KnownTable.ENEMY_DATABASE
+            | KnownTable.ENEMY_HANDBOOK_TABLE
+            | KnownTable.EP_BREAKBUFF_TABLE
+            | KnownTable.EXTRA_BATTLELOG_TABLE
+            | KnownTable.FAVOR_TABLE
+            | KnownTable.GACHA_TABLE
+            | KnownTable.GAMEDATA_CONST
+            | KnownTable.HANDBOOK_INFO_TABLE
+            | KnownTable.HANDBOOK_TEAM_TABLE
+            | KnownTable.HOTUPDATE_META_TABLE
+            | KnownTable.INIT_TEXT
+            | KnownTable.ITEM_TABLE
+            | KnownTable.LEGION_MODE_BUFF_TABLE
+            | KnownTable.LEVEL_SCRIPT_TABLE
+            | KnownTable.MAIN_TEXT
+            | KnownTable.MEDAL_TABLE
+            | KnownTable.META_UI_TABLE
+            | KnownTable.MISSION_TABLE
+            | KnownTable.OPEN_SERVER_TABLE
+            | KnownTable.REPLICATE_TABLE
+            | KnownTable.RETRO_TABLE
+            | KnownTable.ROGUELIKE_TOPIC_TABLE
+            | KnownTable.SANDBOX_PERM_TABLE
+            | KnownTable.SHOP_CLIENT_TABLE
+            | KnownTable.SKILL_TABLE
+            | KnownTable.SKIN_TABLE
+            | KnownTable.SPECIAL_OPERATOR_TABLE
+            | KnownTable.STAGE_TABLE
+            | KnownTable.STORY_REVIEW_META_TABLE
+            | KnownTable.STORY_REVIEW_TABLE
+            | KnownTable.STORY_TABLE
+            | KnownTable.TIP_TABLE
+            | KnownTable.TOKEN_TABLE
+            | KnownTable.UNIEQUIP_TABLE
+            | KnownTable.ZONE_TABLE
+        ):
             return [
                 script_decorator,
                 header_decorator,

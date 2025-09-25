@@ -337,3 +337,7 @@ def encoding_decorator(func):
         return func(data.decode("utf-8")).encode("utf-8")
 
     return wrapper
+
+
+def nop_mod_table_func(table):
+    return table

@@ -102,6 +102,22 @@ class Resource:
 
             self.anon_asset_name_dict[anon_asset_name].add(ab_name)
 
+    ANCHOR_LEVEL_ID_SET = {
+        "level_main_01-07",
+        "level_camp_03",
+        "level_act3d0_01",
+    }
+
+    def build_level_ab_name_set(self):
+        self.level_ab_name_set: set[str] = set()
+
+        for anchor_level_id in self.ANCHOR_LEVEL_ID_SET:
+            ab_name_set = self.anon_asset_name_dict.get(anchor_level_id, set())
+            if len(ab_name_set) != 1:
+                raise FileNotFoundError(f"anchor_level_id {anchor_level_id} not found")
+
+            self.level_ab_name_set.add(next(iter(ab_name_set)))
+
     def load_anon_asset(self) -> set[str]:
         if self.anon_ab_name_set is not None:
             return self.anon_ab_name_set
@@ -118,6 +134,8 @@ class Resource:
             self.anon_ab_name_set.add(ab_name)
 
             self.register_anon_asset_name(ab_name, asset_env)
+
+        self.build_level_ab_name_set()
 
         return self.anon_ab_name_set
 

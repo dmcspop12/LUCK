@@ -5,7 +5,7 @@ from zipfile import ZipFile
 
 import UnityPy
 
-from .helper import download_hot_update_list, download_asset
+from .helper import download_hot_update_list, download_asset, escape_ab_name, write_mod
 from .const import TMP_DIRPATH, ASSET_DIRPATH, MOD_DIRPATH
 
 
@@ -105,14 +105,14 @@ class Resource:
         self.modified_asset_set.add(ab_name)
 
     def build_mod(self, mod_name: str):
-        mod_filepath = Path(MOD_DIRPATH, mod_name + ".dat")
+        mod_dirpath = Path(MOD_DIRPATH, mod_name)
 
-        mod_filepath.parent.mkdir(parents=True, exist_ok=True)
+        mod_dirpath.mkdir(parents=True, exist_ok=True)
 
-        with ZipFile(mod_filepath, "w", zipfile.ZIP_DEFLATED) as zf:
-            for ab_name in self.modified_asset_set:
-                asset_env = self.asset_dict[ab_name]
-                zf.writestr(ab_name, asset_env.file.save())
+        for ab_name in self.modified_asset_set:
+            mod_filepath = (mod_dirpath / escape_ab_name(ab_name)).with_suffix(".dat")
+            asset_env = self.asset_dict[ab_name]
+            write_mod(mod_filepath, ab_name, asset_env.file.save())
 
     def mod_table(self, table_prefix: str, mod_table_func, decorator_lst):
         table_ab_name = None

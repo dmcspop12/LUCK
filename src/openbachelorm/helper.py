@@ -4,6 +4,8 @@ from uuid import uuid4
 from zipfile import ZipFile
 import json
 from functools import wraps
+import zipfile
+from zipfile import ZipFile
 
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad, unpad
@@ -62,12 +64,14 @@ def download_file(url: str, filepath: Path):
         remove_aria2_tmp(tmp_filepath)
 
 
+def escape_ab_name(ab_name: str) -> str:
+    return ab_name.replace("/", "_").replace("#", "__")
+
+
 def get_asset_dat_url(res_version: str, asset_rel_filepath: Path):
     asset_dat_rel_filepath = asset_rel_filepath.with_suffix(".dat")
 
-    asset_dat_url_filename = (
-        asset_dat_rel_filepath.as_posix().replace("/", "_").replace("#", "__")
-    )
+    asset_dat_url_filename = escape_ab_name(asset_dat_rel_filepath.as_posix())
 
     return f"{ORIG_ASSET_URL_PREFIX}/{res_version}/{asset_dat_url_filename}"
 
@@ -528,3 +532,8 @@ def is_known_table_available(table_name: KnownTable, client_version: str):
                 return False
 
     return True
+
+
+def write_mod(mod_filepath: str, ab_name: str, content: bytes):
+    with ZipFile(mod_filepath, "w", zipfile.ZIP_DEFLATED) as zf:
+        zf.writestr(ab_name, content)

@@ -40,6 +40,17 @@ def get_table_data_by_prefix(asset_env: UnityPy.Environment, table_prefix: str):
     return None
 
 
+def get_level_data_by_level_id(asset_env: UnityPy.Environment, level_id: str):
+    for obj in asset_env.objects:
+        if obj.type.name == "TextAsset":
+            data = obj.read()
+
+            if data.m_Name == level_id:
+                return data
+
+    return None
+
+
 class Resource:
     def __init__(self, client_version: str, res_version: str):
         self.client_version = client_version
@@ -155,15 +166,15 @@ class Resource:
             asset_env = self.asset_dict[ab_name]
             write_mod(mod_filepath, ab_name, asset_env.file.save())
 
-    def mod_table(self, table_prefix: str, mod_table_func, decorator_lst):
-        table_ab_name = None
+    def get_table_ab_name(self, table_prefix: str):
         for anon_asset_name in self.anon_asset_name_dict:
             if anon_asset_name.startswith(table_prefix):
-                table_ab_name = next(iter(self.anon_asset_name_dict[anon_asset_name]))
-                break
+                return next(iter(self.anon_asset_name_dict[anon_asset_name]))
 
-        if table_ab_name is None:
-            raise FileNotFoundError(f"{table_prefix} not found")
+        raise FileNotFoundError(f"{table_prefix} not found")
+
+    def mod_table(self, table_prefix: str, mod_table_func, decorator_lst):
+        table_ab_name = self.get_table_ab_name(table_prefix)
 
         table_asset_env = self.get_asset_env(table_ab_name)
 
@@ -177,3 +188,29 @@ class Resource:
         data.m_Script = mod_table_func(data.m_Script)
 
         data.save()
+
+    def get_level_ab_name(self, level_id: str):
+        if level_id not in self.anon_asset_name_dict:
+            raise KeyError(f"{level_id} not found")
+
+        for ab_name in self.anon_asset_name_dict[level_id]:
+            if ab_name in self.level_ab_name_set:
+                return ab_name
+
+        raise KeyError(f"{level_id} is not a level")
+
+    def mod_level(self, level_id: str, mod_level_func, decorator_lst):
+        level_ab_name = self.get_level_ab_name(level_id)
+
+        asset_env = self.get_asset_env(level_ab_name)
+
+        self.mark_modified_asset(level_ab_name)
+
+        level_data = get_level_data_by_level_id(asset_env, level_id)
+
+        for decorator in reversed(decorator_lst):
+            mod_level_func = decorator(mod_level_func)
+
+        level_data.m_Script = mod_level_func(level_data.m_Script)
+
+        level_data.save()

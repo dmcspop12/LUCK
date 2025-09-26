@@ -1,5 +1,8 @@
 from openbachelorm.resource import Resource
-from openbachelorm.helper import get_known_table_decorator_lst
+from openbachelorm.helper import (
+    get_known_table_decorator_lst,
+    get_mod_level_decorator_lst,
+)
 from openbachelorm.const import KnownTable
 
 
@@ -41,6 +44,10 @@ def do_mod_range_table(range_table):
     return range_table
 
 
+def do_mod_level(level):
+    return level
+
+
 def build_sample_mod(client_version: str, res_version: str):
     res = Resource(client_version, res_version)
 
@@ -66,6 +73,11 @@ def build_sample_mod(client_version: str, res_version: str):
         get_known_table_decorator_lst(
             KnownTable.RANGE_TABLE, client_version, res_version
         ),
+    )
+    res.mod_level(
+        "level_main_00-01",
+        do_mod_level,
+        get_mod_level_decorator_lst("level_main_00-01", client_version, res_version),
     )
 
     res.build_mod("sample_mod")

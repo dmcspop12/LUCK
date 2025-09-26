@@ -543,3 +543,13 @@ def get_manifest(manifest_bytes: bytes, client_version: str):
     return json.loads(
         decode_flatc(remove_header(manifest_bytes), client_version, "resource_manifest")
     )
+
+
+def get_mod_level_decorator_lst(level_id: str, client_version: str, res_version: str):
+    return [
+        script_decorator,
+        header_decorator,
+        flatc_decorator(client_version, "prts___levels"),
+        json_decorator,
+        dump_table_decorator(f"{level_id}_{res_version}"),
+    ]

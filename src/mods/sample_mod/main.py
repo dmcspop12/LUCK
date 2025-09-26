@@ -45,6 +45,33 @@ def do_mod_range_table(range_table):
 
 
 def do_mod_level(level):
+    level["enemyDbRefs"].append(
+        {
+            "useDb": True,
+            "id": "enemy_2082_skzdd",
+        }
+    )
+
+    level["waves"] = [
+        {
+            "maxTimeWaitingForNextWave": -1.0,
+            "fragments": [
+                {
+                    "actions": [
+                        {
+                            "managedByScheduler": True,
+                            "key": "enemy_2082_skzdd",
+                            "count": 1,
+                            "interval": 1.0,
+                            "routeIndex": 2,
+                            "autoPreviewRoute": True,
+                        },
+                    ]
+                },
+            ],
+        }
+    ]
+
     return level
 
 

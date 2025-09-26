@@ -30,7 +30,7 @@ def do_mod_range_table(range_table):
     range_table["3-9"]["grids"] = []
 
     for row in range(4, -5, -1):
-        for col in range(0, 7):
+        for col in range(-6, 7):
             range_table["3-9"]["grids"].append(
                 {
                     "row": row,

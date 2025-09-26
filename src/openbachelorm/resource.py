@@ -12,6 +12,7 @@ from .helper import (
     escape_ab_name,
     write_mod,
     get_manifest,
+    dump_table,
 )
 from .const import TMP_DIRPATH, ASSET_DIRPATH, MOD_DIRPATH
 
@@ -72,6 +73,8 @@ class Resource:
             download_asset(self.res_version, Path(self.manifest_ab_name)).read_bytes(),
             self.client_version,
         )
+
+        dump_table(self.manifest, f"manifest_{self.res_version}_pre.json")
 
     def load_asset(self, ab_name: str):
         if ab_name in self.asset_dict:

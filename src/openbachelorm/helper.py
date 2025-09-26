@@ -537,3 +537,9 @@ def is_known_table_available(table_name: KnownTable, client_version: str):
 def write_mod(mod_filepath: str, ab_name: str, content: bytes):
     with ZipFile(mod_filepath, "w", zipfile.ZIP_DEFLATED) as zf:
         zf.writestr(ab_name, content)
+
+
+def get_manifest(manifest_bytes: bytes, client_version: str):
+    return json.loads(
+        decode_flatc(remove_header(manifest_bytes), client_version, "resource_manifest")
+    )

@@ -4,8 +4,15 @@ import zipfile
 from zipfile import ZipFile
 
 import UnityPy
+from packaging.version import Version
 
-from .helper import download_hot_update_list, download_asset, escape_ab_name, write_mod
+from .helper import (
+    download_hot_update_list,
+    download_asset,
+    escape_ab_name,
+    write_mod,
+    get_manifest,
+)
 from .const import TMP_DIRPATH, ASSET_DIRPATH, MOD_DIRPATH
 
 
@@ -52,6 +59,19 @@ class Resource:
             hot_update_list = json.load(f)
 
         self.hot_update_list = hot_update_list
+
+    def load_manifest(self):
+        if Version(self.client_version) < Version("2.5.04"):
+            raise NotImplementedError(
+                f"version {self.client_version} does not have manifest"
+            )
+
+        self.manifest_ab_name = self.hot_update_list["manifestName"]
+
+        self.manifest = get_manifest(
+            download_asset(self.res_version, Path(self.manifest_ab_name)).read_bytes(),
+            self.client_version,
+        )
 
     def load_asset(self, ab_name: str):
         if ab_name in self.asset_dict:

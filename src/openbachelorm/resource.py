@@ -206,6 +206,8 @@ class Resource:
             )
 
     def get_table_ab_name(self, table_prefix: str):
+        self.load_anon_asset()
+
         for anon_asset_name in self.anon_asset_name_dict:
             if anon_asset_name.startswith(table_prefix):
                 return next(iter(self.anon_asset_name_dict[anon_asset_name]))
@@ -242,6 +244,8 @@ class Resource:
         data.save()
 
     def get_level_ab_name(self, level_id: str):
+        self.load_anon_asset()
+
         if level_id not in self.anon_asset_name_dict:
             raise KeyError(f"{level_id} not found")
 

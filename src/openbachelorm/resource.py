@@ -93,7 +93,11 @@ class Resource:
         if ab_name in self.asset_dict:
             return
 
+        print(f"info: {ab_name} not found, start downloading it")
+
         asset_filepath = download_asset(self.res_version, Path(ab_name))
+
+        print(f"info: {ab_name} downloaded")
 
         asset_env = UnityPy.load(asset_filepath.as_posix())
 

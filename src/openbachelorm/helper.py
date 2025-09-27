@@ -574,3 +574,29 @@ def get_manifest_bytes(manifest, client_version: str) -> bytes:
             RESOURCE_MANIFEST,
         )
     )
+
+
+def get_known_table_asset_name_prefix(table_name: KnownTable):
+    match table_name:
+        case KnownTable.BUFF_TABLE:
+            return f"gamedata/{table_name.value}"
+
+        case KnownTable.BUILDING_LOCAL_DATA:
+            return f"gamedata/building/{table_name.value}"
+
+        case (
+            KnownTable.BATTLE_MISC_TABLE
+            | KnownTable.BUFF_TEMPLATE_DATA
+            | KnownTable.COOPERATE_BATTLE_TABLE
+            | KnownTable.EP_BREAKBUFF_TABLE
+            | KnownTable.EXTRA_BATTLELOG_TABLE
+            | KnownTable.LEGION_MODE_BUFF_TABLE
+            | KnownTable.LEVEL_SCRIPT_TABLE
+        ):
+            return f"gamedata/battle/{table_name.value}"
+
+        case KnownTable.ENEMY_DATABASE:
+            return f"gamedata/levels/enemydata/{table_name.value}"
+
+        case _:
+            return f"gamedata/excel/{table_name.value}"

@@ -2,6 +2,7 @@ from openbachelorm.resource import Resource
 from openbachelorm.helper import (
     get_known_table_decorator_lst,
     get_mod_level_decorator_lst,
+    get_known_table_asset_name_prefix,
 )
 from openbachelorm.const import KnownTable
 
@@ -44,6 +45,14 @@ def do_mod_range_table(range_table):
     return range_table
 
 
+LEVEL_ID = "level_main_00-01"
+
+
+# only valid for level_main_00-01
+LEVEL_ASSET_NAME = "gamedata/levels/obt/main/level_main_00-01"
+
+
+# only valid for level_main_00-01
 def do_mod_level(level):
     level["enemyDbRefs"].append(
         {
@@ -78,13 +87,14 @@ def do_mod_level(level):
 def build_sample_mod(client_version: str, res_version: str):
     res = Resource(client_version, res_version)
 
-    res.load_anon_asset()
-
     res.mod_table(
         KnownTable.CHARACTER_TABLE.value,
         do_mod_character_table,
         get_known_table_decorator_lst(
             KnownTable.CHARACTER_TABLE, client_version, res_version
+        ),
+        table_asset_name_prefix=get_known_table_asset_name_prefix(
+            KnownTable.CHARACTER_TABLE
         ),
     )
     res.mod_table(
@@ -93,6 +103,9 @@ def build_sample_mod(client_version: str, res_version: str):
         get_known_table_decorator_lst(
             KnownTable.SKILL_TABLE, client_version, res_version
         ),
+        table_asset_name_prefix=get_known_table_asset_name_prefix(
+            KnownTable.SKILL_TABLE
+        ),
     )
     res.mod_table(
         KnownTable.RANGE_TABLE.value,
@@ -100,11 +113,15 @@ def build_sample_mod(client_version: str, res_version: str):
         get_known_table_decorator_lst(
             KnownTable.RANGE_TABLE, client_version, res_version
         ),
+        table_asset_name_prefix=get_known_table_asset_name_prefix(
+            KnownTable.RANGE_TABLE
+        ),
     )
     res.mod_level(
-        "level_main_00-01",
+        LEVEL_ID,
         do_mod_level,
-        get_mod_level_decorator_lst("level_main_00-01", client_version, res_version),
+        get_mod_level_decorator_lst(LEVEL_ID, client_version, res_version),
+        level_asset_name=LEVEL_ASSET_NAME,
     )
 
     res.build_mod("sample_mod")

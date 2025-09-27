@@ -3,6 +3,7 @@ from openbachelorm.helper import (
     nop_mod_table_func,
     get_known_table_decorator_lst,
     is_known_table_available,
+    get_known_table_asset_name_prefix,
 )
 from openbachelorm.const import KnownTable
 
@@ -19,6 +20,7 @@ def load_known_table(client_version: str, res_version: str):
             known_table.value,
             nop_mod_table_func,
             get_known_table_decorator_lst(known_table, client_version, res_version),
+            table_asset_name_prefix=get_known_table_asset_name_prefix(known_table),
         )
 
 

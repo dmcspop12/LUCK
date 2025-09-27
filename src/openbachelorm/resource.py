@@ -95,9 +95,30 @@ class Resource:
 
         dump_table(self.manifest, f"manifest_{self.res_version}_pre.json")
 
+    def get_ab_name_from_manifest(self, asset_obj):
+        return self.manifest["bundles"][asset_obj["bundleIndex"]]["name"]
+
+    def query_manifest(self, asset_name: str):
+        self.load_manifest()
+
+        for asset_obj in self.manifest["assetToBundleList"]:
+            if asset_obj["assetName"] == asset_name:
+                return self.get_ab_name_from_manifest(asset_obj)
+
+        raise KeyError(f"{asset_name} not found")
+
+    def query_manifest_by_prefix(self, asset_name_prefix: str):
+        self.load_manifest()
+
+        for asset_obj in self.manifest["assetToBundleList"]:
+            if asset_obj["assetName"].startswith(asset_name_prefix):
+                return self.get_ab_name_from_manifest(asset_obj)
+
+        raise KeyError(f"{asset_name_prefix} not found")
+
     def load_asset(self, ab_name: str):
         if ab_name in self.asset_dict:
-            return
+            return self.asset_dict[ab_name]
 
         asset_filepath = download_asset(self.res_version, Path(ab_name))
 
@@ -191,10 +212,23 @@ class Resource:
 
         raise FileNotFoundError(f"{table_prefix} not found")
 
-    def mod_table(self, table_prefix: str, mod_table_func, decorator_lst):
-        table_ab_name = self.get_table_ab_name(table_prefix)
+    def mod_table(
+        self,
+        table_prefix: str,
+        mod_table_func,
+        decorator_lst,
+        table_asset_name_prefix: str = "",
+        no_manifest=False,
+    ):
+        if no_manifest:
+            table_ab_name = self.get_table_ab_name(table_prefix)
+            table_asset_env = self.get_asset_env(table_ab_name)
+        else:
+            if not table_asset_name_prefix:
+                raise ValueError("table_asset_name_prefix must be provided")
 
-        table_asset_env = self.get_asset_env(table_ab_name)
+            table_ab_name = self.query_manifest_by_prefix(table_asset_name_prefix)
+            table_asset_env = self.load_asset(table_ab_name)
 
         self.mark_modified_asset(table_ab_name)
 
@@ -217,10 +251,23 @@ class Resource:
 
         raise KeyError(f"{level_id} is not a level")
 
-    def mod_level(self, level_id: str, mod_level_func, decorator_lst):
-        level_ab_name = self.get_level_ab_name(level_id)
+    def mod_level(
+        self,
+        level_id: str,
+        mod_level_func,
+        decorator_lst,
+        level_asset_name: str = "",
+        no_manifest=False,
+    ):
+        if no_manifest:
+            level_ab_name = self.get_level_ab_name(level_id)
+            asset_env = self.get_asset_env(level_ab_name)
+        else:
+            if not level_asset_name:
+                raise ValueError("level_asset_name must be provided")
 
-        asset_env = self.get_asset_env(level_ab_name)
+            level_ab_name = self.query_manifest(level_asset_name)
+            asset_env = self.load_asset(level_ab_name)
 
         self.mark_modified_asset(level_ab_name)
 

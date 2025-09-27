@@ -80,11 +80,6 @@ class Resource:
         self.hot_update_list = hot_update_list
 
     def load_manifest(self):
-        if Version(self.client_version) < Version("2.5.04"):
-            raise NotImplementedError(
-                f"version {self.client_version} does not have manifest"
-            )
-
         self.manifest_ab_name = self.hot_update_list["manifestName"]
 
         self.manifest = get_manifest(

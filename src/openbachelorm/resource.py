@@ -13,6 +13,7 @@ from .helper import (
     write_mod,
     get_manifest,
     dump_table,
+    get_manifest_bytes,
 )
 from .const import TMP_DIRPATH, ASSET_DIRPATH, MOD_DIRPATH
 
@@ -51,6 +52,10 @@ def get_level_data_by_level_id(asset_env: UnityPy.Environment, level_id: str):
     return None
 
 
+def get_mod_filepath(mod_dirpath: Path, ab_name: str):
+    return (mod_dirpath / escape_ab_name(ab_name)).with_suffix(".dat")
+
+
 class Resource:
     def __init__(self, client_version: str, res_version: str):
         self.client_version = client_version
@@ -61,6 +66,8 @@ class Resource:
 
         self.anon_ab_name_set: set[str] = None
         self.anon_asset_name_dict: dict[str, set[str]] = {}
+
+        self.manifest_modified = False
 
         self.load_hot_update_list()
 
@@ -162,9 +169,17 @@ class Resource:
         mod_dirpath.mkdir(parents=True, exist_ok=True)
 
         for ab_name in self.modified_asset_set:
-            mod_filepath = (mod_dirpath / escape_ab_name(ab_name)).with_suffix(".dat")
+            mod_filepath = get_mod_filepath(mod_dirpath, ab_name)
             asset_env = self.asset_dict[ab_name]
             write_mod(mod_filepath, ab_name, asset_env.file.save())
+
+        if self.manifest_modified:
+            manifest_bytes = get_manifest_bytes(self.manifest, self.client_version)
+            write_mod(
+                get_mod_filepath(mod_dirpath, self.manifest_ab_name),
+                self.manifest_ab_name,
+                manifest_bytes,
+            )
 
     def get_table_ab_name(self, table_prefix: str):
         for anon_asset_name in self.anon_asset_name_dict:
@@ -214,3 +229,6 @@ class Resource:
         level_data.m_Script = mod_level_func(level_data.m_Script)
 
         level_data.save()
+
+    def mark_manifest(self):
+        self.manifest_modified = True

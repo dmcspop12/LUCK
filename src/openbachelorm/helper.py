@@ -539,9 +539,16 @@ def write_mod(mod_filepath: str, ab_name: str, content: bytes):
         zf.writestr(ab_name, content)
 
 
+RESOURCE_MANIFEST = "resource_manifest"
+
+
 def get_manifest(manifest_bytes: bytes, client_version: str):
     return json.loads(
-        decode_flatc(remove_header(manifest_bytes), client_version, "resource_manifest")
+        decode_flatc(
+            remove_header(manifest_bytes),
+            client_version,
+            RESOURCE_MANIFEST,
+        )
     )
 
 
@@ -553,3 +560,13 @@ def get_mod_level_decorator_lst(level_id: str, client_version: str, res_version:
         json_decorator,
         dump_table_decorator(f"{level_id}_{res_version}"),
     ]
+
+
+def get_manifest_bytes(manifest, client_version: str) -> bytes:
+    return add_header(
+        encode_flatc(
+            json.dumps(manifest, ensure_ascii=False),
+            client_version,
+            RESOURCE_MANIFEST,
+        )
+    )

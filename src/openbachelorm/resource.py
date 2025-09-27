@@ -234,4 +234,7 @@ class Resource:
         level_data.save()
 
     def mark_manifest(self):
+        if not self.manifest_loaded:
+            raise KeyError("manifest not loaded")
+
         self.manifest_modified = True

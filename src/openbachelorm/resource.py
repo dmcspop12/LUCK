@@ -67,6 +67,7 @@ class Resource:
         self.anon_ab_name_set: set[str] = None
         self.anon_asset_name_dict: dict[str, set[str]] = {}
 
+        self.manifest_loaded = False
         self.manifest_modified = False
 
         self.load_hot_update_list()
@@ -80,6 +81,9 @@ class Resource:
         self.hot_update_list = hot_update_list
 
     def load_manifest(self):
+        if self.manifest_loaded:
+            return
+
         self.manifest_ab_name = self.hot_update_list["manifestName"]
 
         self.manifest = get_manifest(
@@ -87,17 +91,15 @@ class Resource:
             self.client_version,
         )
 
+        self.manifest_loaded = True
+
         dump_table(self.manifest, f"manifest_{self.res_version}_pre.json")
 
     def load_asset(self, ab_name: str):
         if ab_name in self.asset_dict:
             return
 
-        print(f"info: {ab_name} not found, start downloading it")
-
         asset_filepath = download_asset(self.res_version, Path(ab_name))
-
-        print(f"info: {ab_name} downloaded")
 
         asset_env = UnityPy.load(asset_filepath.as_posix())
 

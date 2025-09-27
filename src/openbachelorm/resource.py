@@ -128,11 +128,6 @@ class Resource:
 
         return asset_env
 
-    def get_asset_env(self, ab_name: str):
-        asset_env = self.asset_dict[ab_name]
-
-        return asset_env
-
     def register_anon_asset_name(self, ab_name: str, asset_env: UnityPy.Environment):
         anon_asset_name_set = get_anon_asset_name_set(asset_env)
 
@@ -224,13 +219,14 @@ class Resource:
     ):
         if no_manifest:
             table_ab_name = self.get_table_ab_name(table_prefix)
-            table_asset_env = self.get_asset_env(table_ab_name)
+
         else:
             if not table_asset_name_prefix:
                 raise ValueError("table_asset_name_prefix must be provided")
 
             table_ab_name = self.query_manifest_by_prefix(table_asset_name_prefix)
-            table_asset_env = self.load_asset(table_ab_name)
+
+        table_asset_env = self.load_asset(table_ab_name)
 
         self.mark_modified_asset(table_ab_name)
 
@@ -265,13 +261,13 @@ class Resource:
     ):
         if no_manifest:
             level_ab_name = self.get_level_ab_name(level_id)
-            asset_env = self.get_asset_env(level_ab_name)
         else:
             if not level_asset_name:
                 raise ValueError("level_asset_name must be provided")
 
             level_ab_name = self.query_manifest(level_asset_name)
-            asset_env = self.load_asset(level_ab_name)
+
+        asset_env = self.load_asset(level_ab_name)
 
         self.mark_modified_asset(level_ab_name)
 

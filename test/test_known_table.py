@@ -11,8 +11,6 @@ from openbachelorm.const import KnownTable
 def load_known_table(client_version: str, res_version: str):
     res = Resource(client_version, res_version)
 
-    res.load_anon_asset()
-
     for known_table in KnownTable:
         if not is_known_table_available(known_table, client_version):
             continue

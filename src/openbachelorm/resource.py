@@ -155,7 +155,7 @@ class Resource:
 
     def load_anon_asset(self) -> set[str]:
         if self.anon_ab_name_set is not None:
-            return self.anon_ab_name_set
+            return
 
         self.anon_ab_name_set = set()
 
@@ -171,8 +171,6 @@ class Resource:
             self.register_anon_asset_name(ab_name, asset_env)
 
         self.build_level_ab_name_set()
-
-        return self.anon_ab_name_set
 
     def mark_modified_asset(self, ab_name: str):
         if ab_name not in self.asset_dict:

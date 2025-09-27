@@ -39,6 +39,8 @@ def get_tmp_filepath():
 
 
 def download_file(url: str, filepath: Path):
+    print(f"info: downloading {url}")
+
     filepath.parent.mkdir(parents=True, exist_ok=True)
 
     tmp_filepath = get_tmp_filepath()
@@ -59,6 +61,8 @@ def download_file(url: str, filepath: Path):
             raise ConnectionError(f"download_file failed to download {url}")
 
         tmp_filepath.replace(filepath)
+
+        print(f"info: {url} downloaded")
 
     finally:
         remove_aria2_tmp(tmp_filepath)

@@ -174,6 +174,8 @@ class Resource:
             write_mod(mod_filepath, ab_name, asset_env.file.save())
 
         if self.manifest_modified:
+            dump_table(self.manifest, f"manifest_{self.res_version}_post.json")
+
             manifest_bytes = get_manifest_bytes(self.manifest, self.client_version)
             write_mod(
                 get_mod_filepath(mod_dirpath, self.manifest_ab_name),

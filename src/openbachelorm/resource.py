@@ -70,6 +70,8 @@ class Resource:
         self.manifest_loaded = False
         self.manifest_modified = False
 
+        self.foreign_asset_dict: dict[str, Path] = {}
+
         self.load_hot_update_list()
 
     def load_hot_update_list(self):
@@ -198,6 +200,13 @@ class Resource:
                 manifest_bytes,
             )
 
+        for ab_name, ab_path in self.foreign_asset_dict.items():
+            write_mod(
+                get_mod_filepath(mod_dirpath, ab_name),
+                ab_name,
+                ab_path.read_bytes(),
+            )
+
     def get_table_ab_name(self, table_prefix: str):
         self.load_anon_asset()
 
@@ -283,3 +292,6 @@ class Resource:
             raise KeyError("manifest not loaded")
 
         self.manifest_modified = True
+
+    def register_foreign_asset(self, ab_name: str, ab_path: Path):
+        self.foreign_asset_dict[ab_name] = ab_path

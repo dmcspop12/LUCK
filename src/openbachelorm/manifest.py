@@ -24,6 +24,8 @@ class ManifestAsset:
     name: str
     path: str
 
+    bundle: "ManifestBundle" = None
+
 
 def create_child_node_if_necessary(node: Node, child_name: str) -> Node:
     for child in node.children:
@@ -98,6 +100,8 @@ class ManifestManager:
                 name=asset_dict.get("name"),
                 path=asset_dict.get("path"),
             )
+
+            asset.bundle = self.bundle_lst[asset.bundleIndex]
 
             if not asset.path:
                 self.dangling_asset_lst.append(asset)

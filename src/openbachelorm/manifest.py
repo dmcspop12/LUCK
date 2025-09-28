@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from copy import deepcopy
 
 from .resource import Resource
@@ -10,6 +10,8 @@ class ManifestBundle:
     props: int
     sccIndex: int
     allDependencies: list[int]
+
+    dep_on_lst: list["ManifestBundle"] = field(default_factory=list)
 
 
 class ManifestManager:
@@ -23,7 +25,7 @@ class ManifestManager:
         self.build_bundle_lst()
 
     def build_bundle_lst(self):
-        self.bundle_lst = []
+        self.bundle_lst: list[ManifestBundle] = []
 
         for bundle_dict in self.manifest["bundles"]:
             bundle = ManifestBundle(
@@ -34,3 +36,10 @@ class ManifestManager:
             )
 
             self.bundle_lst.append(bundle)
+
+        for bundle in self.bundle_lst:
+            if not bundle.allDependencies:
+                continue
+
+            for i in bundle.allDependencies:
+                bundle.dep_on_lst.append(self.bundle_lst[i])

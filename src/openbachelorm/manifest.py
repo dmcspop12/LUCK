@@ -1,5 +1,6 @@
 from dataclasses import dataclass, field
 from copy import deepcopy
+from pathlib import Path
 
 from anytree import Node
 
@@ -22,6 +23,18 @@ class ManifestAsset:
     bundleIndex: int
     name: str
     path: str
+
+
+def create_child_node_if_necessary(node: Node, child_name: str) -> Node:
+    for child in node.children:
+        if child.name == child_name:
+            if not child.is_dir:
+                print(f"warn: file {child} used as folder")
+            return child
+
+    child = Node(child_name, parent=node, is_dir=True)
+
+    return child
 
 
 ASSET_TREE_ROOT_NAME = "openbachelorm"
@@ -58,6 +71,16 @@ class ManifestManager:
             for i in bundle.allDependencies:
                 bundle.dep_on_lst.append(self.bundle_lst[i])
 
+    def add_to_asset_tree(self, asset: ManifestAsset):
+        asset_path = Path(asset.path)
+
+        cur_node = self.asset_tree_root
+
+        for dir_name in asset_path.parent.parts:
+            cur_node = create_child_node_if_necessary(cur_node, dir_name)
+
+        return Node(asset_path.name, parent=cur_node, is_dir=False, asset=asset)
+
     def build_asset_tree(self):
         self.asset_tree_root = Node(ASSET_TREE_ROOT_NAME, is_dir=True)
         self.dangling_asset_lst: list[ManifestAsset] = []
@@ -73,3 +96,5 @@ class ManifestManager:
             if not asset.path:
                 self.dangling_asset_lst.append(asset)
                 continue
+
+            self.add_to_asset_tree(asset)

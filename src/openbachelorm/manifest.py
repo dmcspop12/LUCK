@@ -1,6 +1,8 @@
 from dataclasses import dataclass, field
 from copy import deepcopy
 
+from anytree import Node
+
 from .resource import Resource
 
 
@@ -54,6 +56,9 @@ class ManifestManager:
                 bundle.dep_on_lst.append(self.bundle_lst[i])
 
     def build_asset_tree(self):
+        self.asset_tree_root = Node("openbachelorm")
+        self.dangling_asset_lst: list[ManifestAsset] = []
+
         for asset_dict in self.manifest["assetToBundleList"]:
             asset = ManifestAsset(
                 assetName=asset_dict.get("assetName"),
@@ -61,3 +66,7 @@ class ManifestManager:
                 name=asset_dict.get("name"),
                 path=asset_dict.get("path"),
             )
+
+            if not asset.path:
+                self.dangling_asset_lst.append(asset)
+                continue

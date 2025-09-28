@@ -24,6 +24,9 @@ class ManifestAsset:
     path: str
 
 
+ASSET_TREE_ROOT_NAME = "openbachelorm"
+
+
 class ManifestManager:
     def __init__(self, res: Resource):
         self.resource = res
@@ -56,7 +59,7 @@ class ManifestManager:
                 bundle.dep_on_lst.append(self.bundle_lst[i])
 
     def build_asset_tree(self):
-        self.asset_tree_root = Node("openbachelorm")
+        self.asset_tree_root = Node(ASSET_TREE_ROOT_NAME, is_dir=True)
         self.dangling_asset_lst: list[ManifestAsset] = []
 
         for asset_dict in self.manifest["assetToBundleList"]:

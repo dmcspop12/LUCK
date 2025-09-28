@@ -79,7 +79,13 @@ class ManifestManager:
         for dir_name in asset_path.parent.parts:
             cur_node = create_child_node_if_necessary(cur_node, dir_name)
 
-        return Node(asset_path.name, parent=cur_node, is_dir=False, asset=asset)
+        asset_node = Node(asset_path.name, parent=cur_node, is_dir=False, asset=asset)
+
+        for child in cur_node.children:
+            if child.name == asset_path.name:
+                print(f"warn: asset_node {asset_node} already added")
+
+        return asset_node
 
     def build_asset_tree(self):
         self.asset_tree_root = Node(ASSET_TREE_ROOT_NAME, is_dir=True)

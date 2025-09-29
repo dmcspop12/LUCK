@@ -2,9 +2,10 @@ from dataclasses import dataclass, field
 from copy import deepcopy
 from pathlib import Path
 
-from anytree import Node
+from anytree import Node, RenderTree
 
 from .resource import Resource
+from .const import TMP_DIRPATH
 
 
 @dataclass
@@ -58,6 +59,16 @@ def create_child_node_if_necessary(node: Node, child_name: str) -> Node:
         child = node.child_dict[child_name]
 
     return child
+
+
+def dump_tree(root: Node, filename: str):
+    tree_filepath = Path(
+        TMP_DIRPATH,
+        filename,
+    )
+    with open(tree_filepath, "w", encoding="utf-8") as f:
+        for row in RenderTree(root):
+            print(f"{row.pre}{row.node.name}", file=f)
 
 
 ASSET_TREE_ROOT_NAME = "openbachelorm"
@@ -127,3 +138,5 @@ class ManifestManager:
                 continue
 
             self.add_to_asset_tree(asset)
+
+        dump_tree(self.asset_tree_root, f"asset_tree_{self.resource.res_version}.txt")

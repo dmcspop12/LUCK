@@ -176,3 +176,30 @@ class ManifestMerger:
         self.src_res_manager_lst = [ManifestManager(i) for i in src_res_lst]
 
         self.merger_tree_root = new_dir_node(MERGER_TREE_ROOT_NAME)
+
+    def merge_single_src_res(self, src_res_manager: ManifestManager):
+        for node in PreOrderIter(src_res_manager.asset_tree_root):
+            if node.is_dir:
+                continue
+
+            path = get_node_path(node)
+
+            if is_file_in_tree(self.target_res_manager.asset_tree_root, path):
+                continue
+
+            if is_file_in_tree(self.merger_tree_root, path):
+                continue
+
+            add_file_to_tree(
+                self.merger_tree_root,
+                path,
+            )
+
+    def merge_src_res(self):
+        for src_res_manager in self.src_res_manager_lst:
+            self.merge_single_src_res(src_res_manager)
+
+        dump_tree(
+            self.merger_tree_root,
+            f"merger_tree_{self.target_res.res_version}.txt",
+        )

@@ -2,7 +2,7 @@ from dataclasses import dataclass, field
 from copy import deepcopy
 from pathlib import Path
 
-from anytree import Node, RenderTree
+from anytree import Node, PreOrderIter
 
 from .resource import Resource
 from .const import TMP_DIRPATH
@@ -66,9 +66,10 @@ def dump_tree(root: Node, filename: str):
         TMP_DIRPATH,
         filename,
     )
+    indent = "    "
     with open(tree_filepath, "w", encoding="utf-8") as f:
-        for row in RenderTree(root):
-            print(f"{row.pre}{row.node.name}", file=f)
+        for node in PreOrderIter(root):
+            print(f"{indent * node.depth}{node.name}", file=f)
 
 
 ASSET_TREE_ROOT_NAME = "openbachelorm"

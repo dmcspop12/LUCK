@@ -164,6 +164,9 @@ class ManifestManager:
         dump_tree(self.asset_tree_root, f"asset_tree_{self.resource.res_version}.txt")
 
 
+MERGER_TREE_ROOT_NAME = "openbachelorm"
+
+
 class ManifestMerger:
     def __init__(self, target_res: Resource, src_res_lst: list[Resource]):
         self.target_res = target_res
@@ -171,3 +174,5 @@ class ManifestMerger:
 
         self.target_res_manager = ManifestManager(target_res)
         self.src_res_manager_lst = [ManifestManager(i) for i in src_res_lst]
+
+        self.merger_tree_root = new_dir_node(MERGER_TREE_ROOT_NAME)

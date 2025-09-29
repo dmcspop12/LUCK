@@ -29,6 +29,8 @@ class ManifestAsset:
 
 def add_node_to_parent(parent: Node, name: str, node: Node):
     if parent is not None:
+        if not parent.is_dir:
+            raise KeyError(f"{parent} not a dir")
         if name in parent.child_dict:
             raise KeyError(f"{node} already exist")
         parent.child_dict[name] = node

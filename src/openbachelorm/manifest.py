@@ -81,6 +81,19 @@ def create_child_node_if_necessary(node: Node, child_name: str) -> Node:
     return child
 
 
+def add_file_to_tree(root: Node, path: str, **kwargs) -> Node:
+    path_obj = Path(path)
+
+    node = root
+
+    for dir_name in path_obj.parent.parts:
+        node = create_child_node_if_necessary(node, dir_name)
+
+    node = new_file_node(path_obj.name, node, **kwargs)
+
+    return node
+
+
 def dump_tree(root: Node, filename: str):
     tree_filepath = Path(
         TMP_DIRPATH,
@@ -128,18 +141,6 @@ class ManifestManager:
             for i in bundle.allDependencies:
                 bundle.dep_on_lst.append(self.bundle_lst[i])
 
-    def add_to_asset_tree(self, asset: ManifestAsset):
-        asset_path = Path(asset.path)
-
-        cur_node = self.asset_tree_root
-
-        for dir_name in asset_path.parent.parts:
-            cur_node = create_child_node_if_necessary(cur_node, dir_name)
-
-        asset_node = new_file_node(asset_path.name, cur_node, asset=asset)
-
-        return asset_node
-
     def build_asset_tree(self):
         self.asset_tree_root = new_dir_node(ASSET_TREE_ROOT_NAME)
         self.dangling_asset_lst: list[ManifestAsset] = []
@@ -158,6 +159,6 @@ class ManifestManager:
                 self.dangling_asset_lst.append(asset)
                 continue
 
-            self.add_to_asset_tree(asset)
+            add_file_to_tree(self.asset_tree_root, asset.path, asset=asset)
 
         dump_tree(self.asset_tree_root, f"asset_tree_{self.resource.res_version}.txt")

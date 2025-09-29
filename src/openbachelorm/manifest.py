@@ -76,6 +76,7 @@ class ManifestManager:
 
     def build_bundle_lst(self):
         self.bundle_lst: list[ManifestBundle] = []
+        self.bundle_dict: dict[str, ManifestBundle] = {}
 
         for bundle_dict in self.manifest["bundles"]:
             bundle = ManifestBundle(
@@ -86,6 +87,7 @@ class ManifestManager:
             )
 
             self.bundle_lst.append(bundle)
+            self.bundle_dict[bundle.name] = bundle
 
         for bundle in self.bundle_lst:
             if not bundle.allDependencies:

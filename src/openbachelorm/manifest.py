@@ -193,6 +193,8 @@ class ManifestMerger:
             add_file_to_tree(
                 self.merger_tree_root,
                 path,
+                asset=node.asset,
+                src_res_manager=src_res_manager,
             )
 
     def merge_src_res(self):

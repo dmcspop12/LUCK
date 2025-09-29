@@ -28,12 +28,16 @@ class ManifestAsset:
     bundle: "ManifestBundle" = None
 
 
+def get_node_path(node: Node) -> str:
+    return "/".join([i.name for i in node.path])
+
+
 def add_node_to_parent(parent: Node, name: str, node: Node):
     if parent is not None:
         if not parent.is_dir:
-            raise KeyError(f"{parent} not a dir")
+            raise KeyError(f"{get_node_path(parent)} not a dir")
         if name in parent.child_dict:
-            raise KeyError(f"{node} already exist")
+            raise KeyError(f"{get_node_path(node)} already exist")
         parent.child_dict[name] = node
 
 
@@ -49,9 +53,25 @@ def new_file_node(file_name: str, parent: Node = None, **kwargs):
     return node
 
 
+def is_file_in_tree(root: Node, path: str) -> bool:
+    node = root
+    for i in Path(path).parts:
+        if not node.is_dir:
+            raise KeyError(f"{get_node_path(node)} not a dir")
+        if i not in node.child_dict:
+            return False
+
+        node = node.child_dict[i]
+
+    if node.is_dir:
+        raise KeyError(f"{get_node_path(node)} not a file")
+
+    return True
+
+
 def create_child_node_if_necessary(node: Node, child_name: str) -> Node:
     if not node.is_dir:
-        raise KeyError(f"{node} not a dir")
+        raise KeyError(f"{get_node_path(node)} not a dir")
 
     if child_name not in node.child_dict:
         child = new_dir_node(child_name, node)

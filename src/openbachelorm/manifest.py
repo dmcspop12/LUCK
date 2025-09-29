@@ -43,8 +43,8 @@ def new_dir_node(dir_name: str, parent: Node = None) -> Node:
     return node
 
 
-def new_file_node(file_name: str, asset: ManifestAsset, parent: Node = None):
-    node = Node(file_name, parent=parent, is_dir=False, asset=asset)
+def new_file_node(file_name: str, parent: Node = None, **kwargs):
+    node = Node(file_name, parent=parent, is_dir=False, **kwargs)
     add_node_to_parent(parent, file_name, node)
     return node
 
@@ -116,7 +116,7 @@ class ManifestManager:
         for dir_name in asset_path.parent.parts:
             cur_node = create_child_node_if_necessary(cur_node, dir_name)
 
-        asset_node = new_file_node(asset_path.name, asset, cur_node)
+        asset_node = new_file_node(asset_path.name, cur_node, asset=asset)
 
         return asset_node
 

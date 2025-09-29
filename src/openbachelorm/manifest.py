@@ -162,3 +162,12 @@ class ManifestManager:
             add_file_to_tree(self.asset_tree_root, asset.path, asset=asset)
 
         dump_tree(self.asset_tree_root, f"asset_tree_{self.resource.res_version}.txt")
+
+
+class ManifestMerger:
+    def __init__(self, target_res: Resource, src_res_lst: list[Resource]):
+        self.target_res = target_res
+        self.src_res_lst = src_res_lst
+
+        self.target_res_manager = ManifestManager(target_res)
+        self.src_res_manager_lst = [ManifestManager(i) for i in src_res_lst]

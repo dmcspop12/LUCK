@@ -29,7 +29,7 @@ class ManifestAsset:
 
 
 def get_node_path(node: Node) -> str:
-    return "/".join([i.name for i in node.path])
+    return "/".join([i.name for i in node.path[1:]])
 
 
 def add_node_to_parent(parent: Node, name: str, node: Node):

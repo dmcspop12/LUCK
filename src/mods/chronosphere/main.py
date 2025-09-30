@@ -17,6 +17,11 @@ def main():
 
     mgr.merge_src_res()
 
+    mgr.copy_merger_tree_node(
+        "dyn/activity/[uc]act43side/zonemaps/zone_map_act43side_zone1.prefab",
+        "dyn/ui/zonemaps/zone_map_act43side_zone1.prefab",
+    )
+
     mgr.prep_merger_bundle()
 
     mgr.build_mod()

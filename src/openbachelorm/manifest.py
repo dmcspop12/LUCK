@@ -63,19 +63,26 @@ def new_file_node(file_name: str, parent: Node = None, **kwargs):
     return node
 
 
-def is_file_in_tree(root: Node, path: str) -> bool:
+def get_node_by_path(root: Node, path: str) -> Node:
     node = root
     for i in Path(path).parts:
         if not node.is_dir:
             raise KeyError(f"{get_node_path(node)} not a dir")
         if i not in node.child_dict:
-            return False
+            return None
 
         node = node.child_dict[i]
 
     if node.is_dir:
         raise KeyError(f"{get_node_path(node)} not a file")
 
+    return node
+
+
+def is_file_in_tree(root: Node, path: str) -> bool:
+    node = get_node_by_path(root, path)
+    if node is None:
+        return False
     return True
 
 
@@ -246,9 +253,14 @@ class ManifestMerger:
         for src_res_manager in self.src_res_manager_lst:
             self.merge_single_src_res(src_res_manager)
 
-        dump_tree(
+    def copy_merger_tree_node(self, src_path: str, dst_path: str):
+        src_node = get_node_by_path(self.merger_tree_root, src_path)
+
+        add_file_to_tree(
             self.merger_tree_root,
-            f"merger_tree_{self.target_res.res_version}.txt",
+            dst_path,
+            asset=src_node.asset,
+            bundle_name=src_node.bundle_name,
         )
 
     def get_merger_bundle_filepath(self, bundle_name: str):
@@ -324,6 +336,11 @@ class ManifestMerger:
             )
 
     def build_mod(self):
+        dump_tree(
+            self.merger_tree_root,
+            f"merger_tree_{self.target_res.res_version}.txt",
+        )
+
         self.new_manifest = deepcopy(self.target_res.manifest)
 
         self.build_mod_bundle()

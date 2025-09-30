@@ -15,6 +15,8 @@ class ManifestBundle:
     sccIndex: int
     allDependencies: list[int]
 
+    manifest: "ManifestManager"
+
     dep_on_lst: list["ManifestBundle"] = field(default_factory=list)
 
 
@@ -24,6 +26,8 @@ class ManifestAsset:
     bundleIndex: int
     name: str
     path: str
+
+    manifest: "ManifestManager"
 
     bundle: "ManifestBundle"
 
@@ -129,6 +133,7 @@ class ManifestManager:
                 props=bundle_dict.get("props", 0),
                 sccIndex=bundle_dict.get("sccIndex", 0),
                 allDependencies=deepcopy(bundle_dict.get("allDependencies")),
+                manifest=self,
             )
 
             self.bundle_lst.append(bundle)
@@ -152,6 +157,7 @@ class ManifestManager:
                 bundleIndex=bundle_idx,
                 name=asset_dict.get("name"),
                 path=asset_dict.get("path"),
+                manifest=self,
                 bundle=self.bundle_lst[bundle_idx],
             )
 
@@ -194,7 +200,6 @@ class ManifestMerger:
                 self.merger_tree_root,
                 path,
                 asset=node.asset,
-                src_res_manager=src_res_manager,
             )
 
     def merge_src_res(self):

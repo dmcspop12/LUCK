@@ -1,6 +1,7 @@
 from dataclasses import dataclass, field
 from copy import deepcopy
 from pathlib import Path
+import shutil
 
 from anytree import Node, PreOrderIter
 
@@ -250,6 +251,15 @@ class ManifestMerger:
             f"merger_tree_{self.target_res.res_version}.txt",
         )
 
+    def get_merger_bundle_filepath(self, bundle_name: str):
+        return Path(TMP_DIRPATH, self.mod_name, bundle_name)
+
     def prep_merger_bundle(self):
         for bundle_name, merger_bundle in self.merger_bundle_dict.items():
             bundle_filepath = download_bundle(merger_bundle.bundle)
+
+            merger_bundle_filepath = self.get_merger_bundle_filepath(bundle_name)
+
+            merger_bundle_filepath.parent.mkdir(parents=True, exist_ok=True)
+
+            shutil.copy(bundle_filepath, merger_bundle_filepath)

@@ -170,6 +170,13 @@ class ManifestManager:
         dump_tree(self.asset_tree_root, f"asset_tree_{self.resource.res_version}.txt")
 
 
+@dataclass
+class MergerBundle:
+    bundle: "ManifestBundle"
+
+    dep_bundle_name_lst: list[str] = field(default_factory=list)
+
+
 MERGER_TREE_ROOT_NAME = "openbachelorm"
 
 
@@ -182,6 +189,26 @@ class ManifestMerger:
         self.src_res_manager_lst = [ManifestManager(i) for i in src_res_lst]
 
         self.merger_tree_root = new_dir_node(MERGER_TREE_ROOT_NAME)
+        self.merger_bundle_dict: dict[str, MergerBundle] = {}
+
+    def recursive_add_bundle(self, bundle: ManifestBundle):
+        if bundle.name in self.target_res_manager.bundle_dict:
+            return
+
+        if bundle.name in self.merger_bundle_dict:
+            return
+
+        merger_bundle = MergerBundle(
+            bundle=bundle,
+        )
+
+        for dep_on in bundle.dep_on_lst:
+            merger_bundle.dep_bundle_name_lst.append(dep_on.name)
+
+        self.merger_bundle_dict[bundle.name] = merger_bundle
+
+        for dep_on in bundle.dep_on_lst:
+            self.recursive_add_bundle(dep_on)
 
     def merge_single_src_res(self, src_res_manager: ManifestManager):
         for node in PreOrderIter(src_res_manager.asset_tree_root):
@@ -202,6 +229,8 @@ class ManifestMerger:
                 asset=node.asset,
                 bundle_name=node.asset.bundle.name,
             )
+
+            self.recursive_add_bundle(node.asset.bundle)
 
     def merge_src_res(self):
         for src_res_manager in self.src_res_manager_lst:

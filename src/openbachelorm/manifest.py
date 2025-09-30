@@ -186,7 +186,11 @@ MERGER_TREE_ROOT_NAME = "openbachelorm"
 
 
 class ManifestMerger:
-    def __init__(self, target_res: Resource, src_res_lst: list[Resource]):
+    def __init__(
+        self, mod_name: str, target_res: Resource, src_res_lst: list[Resource]
+    ):
+        self.mod_name = mod_name
+
         self.target_res = target_res
         self.src_res_lst = src_res_lst
 

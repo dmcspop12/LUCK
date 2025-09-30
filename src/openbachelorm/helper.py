@@ -80,11 +80,11 @@ def get_asset_dat_url(res_version: str, asset_rel_filepath: Path):
     return f"{ORIG_ASSET_URL_PREFIX}/{res_version}/{asset_dat_url_filename}"
 
 
-def get_asset_filepath(res_version: str, asset_rel_filepath: Path):
+def get_asset_filepath(res_version: str, asset_rel_filepath: str):
     return Path(ASSET_DIRPATH) / res_version / asset_rel_filepath
 
 
-def download_asset(res_version: str, asset_rel_filepath: Path) -> Path:
+def download_asset(res_version: str, asset_rel_filepath: str) -> Path:
     asset_filepath = get_asset_filepath(res_version, asset_rel_filepath)
 
     if asset_filepath.is_file():

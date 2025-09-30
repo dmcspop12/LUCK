@@ -34,7 +34,7 @@ class ManifestAsset:
 
 
 def download_bundle(bundle: ManifestBundle) -> Path:
-    return download_asset(bundle.manifest.resource.res_version, Path(bundle.name))
+    return download_asset(bundle.manifest.resource.res_version, bundle.name)
 
 
 def get_node_path(node: Node) -> str:

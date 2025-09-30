@@ -89,7 +89,7 @@ class Resource:
         self.manifest_ab_name = self.hot_update_list["manifestName"]
 
         self.manifest = get_manifest(
-            download_asset(self.res_version, Path(self.manifest_ab_name)).read_bytes(),
+            download_asset(self.res_version, self.manifest_ab_name).read_bytes(),
             self.client_version,
         )
 
@@ -122,7 +122,7 @@ class Resource:
         if ab_name in self.asset_dict:
             return self.asset_dict[ab_name]
 
-        asset_filepath = download_asset(self.res_version, Path(ab_name))
+        asset_filepath = download_asset(self.res_version, ab_name)
 
         asset_env = UnityPy.load(asset_filepath.as_posix())
 

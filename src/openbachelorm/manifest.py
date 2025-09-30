@@ -264,8 +264,70 @@ class ManifestMerger:
 
             shutil.copy(bundle_filepath, merger_bundle_filepath)
 
+    def build_mod_bundle_get_next_scc_idx(self):
+        max_scc_idx = -1
+        for bundle in self.target_res_manager.bundle_lst:
+            max_scc_idx = max(max_scc_idx, bundle.sccIndex)
+
+        return max_scc_idx + 1
+
+    def build_mod_bundle_init_bundle_idx_dict(self):
+        self.bundle_idx_dict: dict[str, int] = {}
+
+        for i, bundle_obj in enumerate(self.new_manifest["bundles"]):
+            self.bundle_idx_dict[bundle_obj["name"]] = i
+
+    def build_mod_bundle(self):
+        next_scc_idx = self.build_mod_bundle_get_next_scc_idx()
+
+        for bundle_name, merger_bundle in self.merger_bundle_dict.items():
+            merger_bundle_filepath = self.get_merger_bundle_filepath(bundle_name)
+
+            self.target_res.register_foreign_asset(bundle_name, merger_bundle_filepath)
+
+            bundle = merger_bundle.bundle
+
+            self.new_manifest["bundles"].append(
+                {
+                    "name": bundle_name,
+                    "props": bundle.props,
+                    "sccIndex": next_scc_idx,
+                }
+            )
+
+            next_scc_idx += 1
+
+        self.build_mod_bundle_init_bundle_idx_dict()
+
+        for bundle_name, merger_bundle in self.merger_bundle_dict.items():
+            bundle_idx = self.bundle_idx_dict[bundle_name]
+
+            self.new_manifest["bundles"][bundle_idx]["allDependencies"] = [
+                self.bundle_idx_dict[i] for i in merger_bundle.dep_bundle_name_lst
+            ]
+
+    def build_mod_asset(self):
+        for node in PreOrderIter(self.merger_tree_root):
+            if node.is_dir:
+                continue
+
+            path = get_node_path(node)
+            path_obj = Path(path)
+
+            self.new_manifest["assetToBundleList"].append(
+                {
+                    "assetName": Path(*path_obj.parts[1:]).with_suffix("").as_posix(),
+                    "bundleIndex": self.bundle_idx_dict[node.bundle_name],
+                    "name": path_obj.with_suffix("").name,
+                    "path": path,
+                },
+            )
+
     def build_mod(self):
         self.new_manifest = deepcopy(self.target_res.manifest)
+
+        self.build_mod_bundle()
+        self.build_mod_asset()
 
         self.target_res.mark_manifest(self.new_manifest)
 

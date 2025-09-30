@@ -16,6 +16,8 @@ def main():
 
     mgr.prep_merger_bundle()
 
+    mgr.build_mod()
+
 
 if __name__ == "__main__":
     main()

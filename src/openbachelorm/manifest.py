@@ -183,6 +183,20 @@ class ManifestManager:
         dump_tree(self.asset_tree_root, f"asset_tree_{self.resource.res_version}.txt")
 
 
+def is_merger_tree_path_allowed(path: str) -> bool:
+    if path.startswith("dyn/gamedata/"):
+        if path.startswith("dyn/gamedata/levels/activities/"):
+            return True
+
+        return False
+
+    return True
+
+
+def is_anon_bundle(bundle: ManifestBundle):
+    return bundle.name.startswith("anon/")
+
+
 @dataclass
 class MergerBundle:
     bundle: "ManifestBundle"
@@ -220,11 +234,15 @@ class ManifestMerger:
         )
 
         for dep_on in bundle.dep_on_lst:
+            if is_anon_bundle(dep_on):
+                continue
             merger_bundle.dep_bundle_name_lst.append(dep_on.name)
 
         self.merger_bundle_dict[bundle.name] = merger_bundle
 
         for dep_on in bundle.dep_on_lst:
+            if is_anon_bundle(dep_on):
+                continue
             self.recursive_add_bundle(dep_on)
 
     def merge_single_src_res(self, src_res_manager: ManifestManager):
@@ -238,6 +256,9 @@ class ManifestMerger:
                 continue
 
             if is_file_in_tree(self.merger_tree_root, path):
+                continue
+
+            if not is_merger_tree_path_allowed(path):
                 continue
 
             add_file_to_tree(

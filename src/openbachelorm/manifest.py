@@ -25,7 +25,7 @@ class ManifestAsset:
     name: str
     path: str
 
-    bundle: "ManifestBundle" = None
+    bundle: "ManifestBundle"
 
 
 def get_node_path(node: Node) -> str:
@@ -146,14 +146,14 @@ class ManifestManager:
         self.dangling_asset_lst: list[ManifestAsset] = []
 
         for asset_dict in self.manifest["assetToBundleList"]:
+            bundle_idx = asset_dict.get("bundleIndex", 0)
             asset = ManifestAsset(
                 assetName=asset_dict.get("assetName"),
-                bundleIndex=asset_dict.get("bundleIndex", 0),
+                bundleIndex=bundle_idx,
                 name=asset_dict.get("name"),
                 path=asset_dict.get("path"),
+                bundle=self.bundle_lst[bundle_idx],
             )
-
-            asset.bundle = self.bundle_lst[asset.bundleIndex]
 
             if not asset.path:
                 self.dangling_asset_lst.append(asset)

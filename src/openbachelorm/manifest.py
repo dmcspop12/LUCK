@@ -200,6 +200,7 @@ class ManifestMerger:
                 self.merger_tree_root,
                 path,
                 asset=node.asset,
+                bundle_name=node.asset.bundle.name,
             )
 
     def merge_src_res(self):

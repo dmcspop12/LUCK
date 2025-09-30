@@ -6,6 +6,7 @@ from anytree import Node, PreOrderIter
 
 from .resource import Resource
 from .const import TMP_DIRPATH
+from .helper import download_asset
 
 
 @dataclass
@@ -30,6 +31,10 @@ class ManifestAsset:
     manifest: "ManifestManager"
 
     bundle: "ManifestBundle"
+
+
+def download_bundle(bundle: ManifestBundle) -> Path:
+    return download_asset(bundle.manifest.resource.res_version, Path(bundle.name))
 
 
 def get_node_path(node: Node) -> str:
@@ -240,3 +245,7 @@ class ManifestMerger:
             self.merger_tree_root,
             f"merger_tree_{self.target_res.res_version}.txt",
         )
+
+    def prep_merger_bundle(self):
+        for bundle_name, merger_bundle in self.merger_bundle_dict.items():
+            bundle_filepath = download_bundle(merger_bundle.bundle)

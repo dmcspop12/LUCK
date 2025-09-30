@@ -84,8 +84,10 @@ def get_asset_filepath(res_version: str, asset_rel_filepath: str):
     return Path(ASSET_DIRPATH) / res_version / asset_rel_filepath
 
 
-def download_asset(res_version: str, asset_rel_filepath: str) -> Path:
-    asset_filepath = get_asset_filepath(res_version, asset_rel_filepath)
+def download_asset(res_version: str, asset_rel_filepath_str: str) -> Path:
+    asset_rel_filepath = Path(asset_rel_filepath_str)
+
+    asset_filepath = get_asset_filepath(res_version, asset_rel_filepath_str)
 
     if asset_filepath.is_file():
         return asset_filepath

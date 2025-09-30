@@ -263,3 +263,10 @@ class ManifestMerger:
             merger_bundle_filepath.parent.mkdir(parents=True, exist_ok=True)
 
             shutil.copy(bundle_filepath, merger_bundle_filepath)
+
+    def build_mod(self):
+        self.new_manifest = deepcopy(self.target_res.manifest)
+
+        self.target_res.mark_manifest(self.new_manifest)
+
+        self.target_res.build_mod(self.mod_name)

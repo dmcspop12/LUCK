@@ -22,6 +22,8 @@ def main():
         "dyn/ui/zonemaps/zone_map_act43side_zone1.prefab",
     )
 
+    mgr.merge_special_anon_bundle()
+
     mgr.prep_merger_bundle()
 
     mgr.build_mod()

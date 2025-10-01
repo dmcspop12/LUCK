@@ -2,8 +2,11 @@ from dataclasses import dataclass, field
 from copy import deepcopy
 from pathlib import Path
 import shutil
+import random
 
 from anytree import Node, PreOrderIter
+from UnityPy import Environment
+from UnityPy.files import SerializedFile
 
 from .resource import Resource
 from .const import TMP_DIRPATH
@@ -183,6 +186,63 @@ class ManifestManager:
         dump_tree(self.asset_tree_root, f"asset_tree_{self.resource.res_version}.txt")
 
 
+def get_special_anon_bundle(mgr: ManifestManager) -> ManifestBundle:
+    return mgr.bundle_dict["arts/clue_hub.ab"].dep_on_lst[0]
+
+
+def get_special_anon_bundle_serialized_file(env: Environment):
+    serialized_file_obj: SerializedFile = env.assets[0]
+    return serialized_file_obj
+
+
+MIN_INT32 = -(2**31)
+MAX_INT32 = 2**31 - 1
+
+
+def get_random_int32():
+    return random.randint(MIN_INT32, MAX_INT32)
+
+
+def merge_special_anon_bundle(
+    dst_env: Environment,
+    src_env_lst: list[Environment],
+):
+    dst_serialized_file = get_special_anon_bundle_serialized_file(dst_env)
+
+    src_serialized_file_lst = [
+        get_special_anon_bundle_serialized_file(i) for i in src_env_lst
+    ]
+
+    dst_name_set: set[str] = set()
+
+    for obj in dst_serialized_file.objects.values():
+        if obj.type.name != "MonoScript":
+            continue
+
+        data = obj.read()
+
+        dst_name_set.add(data.m_Name)
+
+    for src_serialized_file in src_serialized_file_lst:
+        for i, obj in src_serialized_file.objects.items():
+            if obj.type.name != "MonoScript":
+                continue
+
+            data = obj.read()
+
+            if data.m_Name in dst_name_set:
+                continue
+
+            while i in dst_serialized_file.objects:
+                i = get_random_int32()
+
+            dst_serialized_file.objects[i] = obj
+
+            dst_name_set.add(data.m_Name)
+
+    dst_serialized_file.objects = dict(sorted(dst_serialized_file.objects.items()))
+
+
 def is_merger_tree_path_allowed(path: str) -> bool:
     if path.startswith("dyn/gamedata/"):
         if path.startswith("dyn/gamedata/levels/activities/"):
@@ -283,6 +343,24 @@ class ManifestMerger:
             asset=src_node.asset,
             bundle_name=src_node.bundle_name,
         )
+
+    def merge_special_anon_bundle(self):
+        target_special_anon_bundle = get_special_anon_bundle(self.target_res_manager)
+
+        target_env = self.target_res.load_asset(target_special_anon_bundle.name)
+
+        self.target_res.mark_modified_asset(target_special_anon_bundle.name)
+
+        src_env_lst = []
+
+        for src_res_manager in self.src_res_manager_lst:
+            src_special_anon_bundle = get_special_anon_bundle(src_res_manager)
+
+            src_env = src_res_manager.resource.load_asset(src_special_anon_bundle.name)
+
+            src_env_lst.append(src_env)
+
+        merge_special_anon_bundle(target_env, src_env_lst)
 
     def get_merger_bundle_filepath(self, bundle_name: str):
         return Path(TMP_DIRPATH, self.mod_name, bundle_name)

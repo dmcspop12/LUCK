@@ -37,15 +37,15 @@ def copy_zonemap_node(mgr: ManifestMerger):
     # ----------
 
     mgr.copy_merger_tree_node(
-        "activity/[uc]act44side/zonemaps/zone_map_act44side_zone1",
+        "dyn/activity/[uc]act44side/zonemaps/zone_map_act44side_zone1.prefab",
         "dyn/ui/zonemaps/zone_map_act44side_zone1.prefab",
     )
     mgr.copy_merger_tree_node(
-        "activity/[uc]act44side/zonemaps/zone_map_act44side_zone2",
+        "dyn/activity/[uc]act44side/zonemaps/zone_map_act44side_zone2.prefab",
         "dyn/ui/zonemaps/zone_map_act44side_zone2.prefab",
     )
     mgr.copy_merger_tree_node(
-        "activity/[uc]act44side/zonemaps/zone_map_act44side_zone3",
+        "dyn/activity/[uc]act44side/zonemaps/zone_map_act44side_zone3.prefab",
         "dyn/ui/zonemaps/zone_map_act44side_zone3.prefab",
     )
 

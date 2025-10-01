@@ -107,6 +107,15 @@ def get_codegen_migrate_level_decorator_lst():
     ]
 
 
+def get_codegen_migrate_func(
+    dst_client_version: str,
+):
+    def _codegen_migrate_func(level_bytes: bytes) -> bytes:
+        return level_bytes
+
+    return _codegen_migrate_func
+
+
 def migrate_level(
     level_id: str,
     src_client_version: str,
@@ -128,7 +137,7 @@ def migrate_level(
 
     codegen_migrate_level_decorator_lst = get_codegen_migrate_level_decorator_lst()
 
-    codegen_migrate_func = nop_mod_table_func
+    codegen_migrate_func = get_codegen_migrate_func(dst_client_version)
 
     codegen_migrate_func = apply_decorator_lst(
         codegen_migrate_func, codegen_migrate_level_decorator_lst

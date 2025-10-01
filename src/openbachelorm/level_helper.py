@@ -1,5 +1,7 @@
 from functools import wraps
 
+import flatbuffers
+
 from .fbs_codegen.v2_6_41 import (
     prts___levels_generated as prts___levels_v2_6_41,
 )
@@ -111,6 +113,14 @@ def get_codegen_migrate_func(
     dst_client_version: str,
 ):
     def _codegen_migrate_func(level_bytes: bytes) -> bytes:
+        prts___levels = get_prts___levels(dst_client_version)
+
+        level_obj = prts___levels.clz_Torappu_LevelDataT.InitFromPackedBuf(level_bytes)
+
+        builder = flatbuffers.Builder()
+        builder.Finish(level_obj.Pack(builder))
+        level_bytes = bytes(builder.Output())
+
         return level_bytes
 
     return _codegen_migrate_func

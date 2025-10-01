@@ -93,5 +93,5 @@ def get_migrate_level_decorator_lst(
             src_client_version, dst_client_version, "prts___levels"
         ),
         json_decorator,
-        dump_table_decorator(f"{level_id}_{res_version}"),
+        dump_table_decorator(f"{level_id}_{res_version}_migrate"),
     ]

@@ -30,6 +30,7 @@ from .helper import (
     dump_table_decorator,
     encode_flatc,
     decode_flatc,
+    nop_mod_table_func,
 )
 
 
@@ -95,3 +96,42 @@ def get_migrate_level_decorator_lst(
         json_decorator,
         dump_table_decorator(f"{level_id}_{res_version}_migrate"),
     ]
+
+
+def get_codegen_migrate_level_decorator_lst():
+    return [
+        script_decorator,
+        header_decorator,
+    ]
+
+
+def migrate_level(
+    level_id: str,
+    src_client_version: str,
+    dst_client_version: str,
+    res_version: str,
+    level_bytes: bytes,
+) -> bytes:
+    migrate_level_decorator_lst = get_migrate_level_decorator_lst(
+        level_id, src_client_version, dst_client_version, res_version
+    )
+
+    migrate_func = nop_mod_table_func
+
+    for decorator in reversed(migrate_level_decorator_lst):
+        migrate_func = decorator(migrate_func)
+
+    level_bytes = migrate_func(level_bytes)
+
+    # ----------
+
+    codegen_migrate_level_decorator_lst = get_codegen_migrate_level_decorator_lst()
+
+    codegen_migrate_func = nop_mod_table_func
+
+    for decorator in reversed(codegen_migrate_level_decorator_lst):
+        codegen_migrate_func = decorator(codegen_migrate_func)
+
+    level_bytes = codegen_migrate_func(level_bytes)
+
+    return level_bytes

@@ -115,6 +115,14 @@ def recursive_handle_clz_Torappu_EnemyDatabase_AttributesDataT(
     prts___levels,
 ):
     if isinstance(obj, clz_Torappu_EnemyDatabase_AttributesDataT):
+        if hasattr(obj, "palsyImmune") and obj.palsyImmune is None:
+            obj.palsyImmune = prts___levels.clz_Torappu_Undefinable_1_System_Boolean_T()
+
+        if hasattr(obj, "attractImmune") and obj.attractImmune is None:
+            obj.attractImmune = (
+                prts___levels.clz_Torappu_Undefinable_1_System_Boolean_T()
+            )
+
         return
 
     if isinstance(obj, list):

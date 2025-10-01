@@ -31,6 +31,7 @@ from .helper import (
     encode_flatc,
     decode_flatc,
     nop_mod_table_func,
+    get_mod_level_decorator_lst,
 )
 
 
@@ -133,5 +134,18 @@ def migrate_level(
         codegen_migrate_func = decorator(codegen_migrate_func)
 
     level_bytes = codegen_migrate_func(level_bytes)
+
+    # ----------
+
+    log_decorator_lst = get_mod_level_decorator_lst(
+        level_id, dst_client_version, res_version
+    )
+
+    log_func = nop_mod_table_func
+
+    for decorator in reversed(log_decorator_lst):
+        log_func = decorator(log_func)
+
+    level_bytes = log_func(level_bytes)
 
     return level_bytes

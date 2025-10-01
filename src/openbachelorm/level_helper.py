@@ -123,6 +123,11 @@ def recursive_handle_clz_Torappu_EnemyDatabase_AttributesDataT(
                 prts___levels.clz_Torappu_Undefinable_1_System_Boolean_T()
             )
 
+        if hasattr(obj, "epBreakRecoverSpeed") and obj.epBreakRecoverSpeed is None:
+            obj.epBreakRecoverSpeed = (
+                prts___levels.clz_Torappu_Undefinable_1_System_Single_T()
+            )
+
         return
 
     if isinstance(obj, list):

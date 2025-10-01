@@ -182,8 +182,8 @@ def migrate_level(
     src_client_version: str,
     dst_client_version: str,
     res_version: str,
-    level_bytes: bytes,
-) -> bytes:
+    level_str: str,
+) -> str:
     migrate_level_decorator_lst = get_migrate_level_decorator_lst(
         level_id, src_client_version, dst_client_version, res_version
     )
@@ -192,7 +192,7 @@ def migrate_level(
 
     migrate_func = apply_decorator_lst(migrate_func, migrate_level_decorator_lst)
 
-    level_bytes = migrate_func(level_bytes)
+    level_str = migrate_func(level_str)
 
     # ----------
 
@@ -204,7 +204,7 @@ def migrate_level(
         codegen_migrate_func, codegen_migrate_level_decorator_lst
     )
 
-    level_bytes = codegen_migrate_func(level_bytes)
+    level_str = codegen_migrate_func(level_str)
 
     # ----------
 
@@ -216,6 +216,6 @@ def migrate_level(
 
     log_func = apply_decorator_lst(log_func, log_decorator_lst)
 
-    level_bytes = log_func(level_bytes)
+    level_str = log_func(level_str)
 
-    return level_bytes
+    return level_str

@@ -71,6 +71,8 @@ def main():
 
     mgr.prep_merger_bundle()
 
+    mgr.migrate_level()
+
     mgr.build_mod()
 
 

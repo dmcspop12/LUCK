@@ -7,10 +7,12 @@ import random
 from anytree import Node, PreOrderIter
 from UnityPy import Environment
 from UnityPy.files import SerializedFile
+import UnityPy
 
 from .resource import Resource
 from .const import TMP_DIRPATH
 from .helper import download_asset
+from .level_helper import migrate_level
 
 
 @dataclass
@@ -66,7 +68,7 @@ def new_file_node(file_name: str, parent: Node = None, **kwargs):
     return node
 
 
-def get_node_by_path(root: Node, path: str) -> Node:
+def get_node_by_path(root: Node, path: str, dir_ok=False) -> Node:
     node = root
     for i in Path(path).parts:
         if not node.is_dir:
@@ -76,7 +78,7 @@ def get_node_by_path(root: Node, path: str) -> Node:
 
         node = node.child_dict[i]
 
-    if node.is_dir:
+    if not dir_ok and node.is_dir:
         raise KeyError(f"{get_node_path(node)} not a file")
 
     return node
@@ -257,6 +259,33 @@ def is_anon_bundle(bundle: ManifestBundle):
     return bundle.name.startswith("anon/")
 
 
+def migrate_activity_bundle(
+    merger_bundle_filepath: Path,
+    src_client_version: str,
+    dst_client_version: str,
+    res_version: str,
+):
+    env = UnityPy.load(merger_bundle_filepath.as_posix())
+
+    for obj in env.objects:
+        if obj.type.name != "TextAsset":
+            continue
+
+        data = obj.read()
+
+        data.m_Script = migrate_level(
+            data.m_Name,
+            src_client_version,
+            dst_client_version,
+            res_version,
+            data.m_Script,
+        )
+
+        data.save()
+
+    merger_bundle_filepath.write_bytes(env.file.save())
+
+
 @dataclass
 class MergerBundle:
     bundle: "ManifestBundle"
@@ -377,6 +406,37 @@ class ManifestMerger:
             merger_bundle_filepath.parent.mkdir(parents=True, exist_ok=True)
 
             shutil.copy(bundle_filepath, merger_bundle_filepath)
+
+    def migrate_level(self):
+        activity_node = get_node_by_path(
+            self.merger_tree_root, "dyn/gamedata/levels/activities/", dir_ok=True
+        )
+
+        bundle_name_set: set[str] = set()
+
+        for node in PreOrderIter(activity_node):
+            if node.is_dir:
+                continue
+            if node.bundle_name in self.merger_bundle_dict:
+                bundle_name_set.add(node.bundle_name)
+
+        for bundle_name in bundle_name_set:
+            merger_bundle = self.merger_bundle_dict[bundle_name]
+
+            merger_bundle_filepath = self.get_merger_bundle_filepath(bundle_name)
+
+            src_client_version = merger_bundle.bundle.manifest.resource.client_version
+
+            dst_client_version = self.target_res.client_version
+
+            res_version = merger_bundle.bundle.manifest.resource.res_version
+
+            migrate_activity_bundle(
+                merger_bundle_filepath,
+                src_client_version,
+                dst_client_version,
+                res_version,
+            )
 
     def build_mod_bundle_get_next_scc_idx(self):
         max_scc_idx = -1

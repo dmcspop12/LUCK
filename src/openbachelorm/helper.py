@@ -606,3 +606,10 @@ def get_known_table_asset_name_prefix(table_name: KnownTable):
 
         case _:
             return f"gamedata/excel/{table_name.value}"
+
+
+def apply_decorator_lst(func, decorator_lst):
+    for decorator in reversed(decorator_lst):
+        func = decorator(func)
+
+    return func

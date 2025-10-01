@@ -14,6 +14,7 @@ from .helper import (
     get_manifest,
     dump_table,
     get_manifest_bytes,
+    apply_decorator_lst,
 )
 from .const import TMP_DIRPATH, ASSET_DIRPATH, MOD_DIRPATH
 
@@ -239,8 +240,7 @@ class Resource:
 
         data = get_table_data_by_prefix(table_asset_env, table_prefix)
 
-        for decorator in reversed(decorator_lst):
-            mod_table_func = decorator(mod_table_func)
+        mod_table_func = apply_decorator_lst(mod_table_func, decorator_lst)
 
         data.m_Script = mod_table_func(data.m_Script)
 
@@ -280,8 +280,7 @@ class Resource:
 
         level_data = get_level_data_by_level_id(asset_env, level_id)
 
-        for decorator in reversed(decorator_lst):
-            mod_level_func = decorator(mod_level_func)
+        mod_level_func = apply_decorator_lst(mod_level_func, decorator_lst)
 
         level_data.m_Script = mod_level_func(level_data.m_Script)
 

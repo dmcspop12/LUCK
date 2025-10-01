@@ -109,6 +109,34 @@ def get_codegen_migrate_level_decorator_lst():
     ]
 
 
+def recursive_handle_clz_Torappu_EnemyDatabase_AttributesDataT(
+    obj,
+    clz_Torappu_EnemyDatabase_AttributesDataT,
+    prts___levels,
+):
+    if isinstance(obj, clz_Torappu_EnemyDatabase_AttributesDataT):
+        return
+
+    if isinstance(obj, list):
+        for i in obj:
+            recursive_handle_clz_Torappu_EnemyDatabase_AttributesDataT(
+                i,
+                clz_Torappu_EnemyDatabase_AttributesDataT,
+                prts___levels,
+            )
+        return
+
+    if not hasattr(obj, "__dict__"):
+        return
+
+    for i in obj.__dict__.values():
+        recursive_handle_clz_Torappu_EnemyDatabase_AttributesDataT(
+            i,
+            clz_Torappu_EnemyDatabase_AttributesDataT,
+            prts___levels,
+        )
+
+
 def get_codegen_migrate_func(
     dst_client_version: str,
 ):
@@ -116,6 +144,16 @@ def get_codegen_migrate_func(
         prts___levels = get_prts___levels(dst_client_version)
 
         level_obj = prts___levels.clz_Torappu_LevelDataT.InitFromPackedBuf(level_bytes)
+
+        clz_Torappu_EnemyDatabase_AttributesDataT = (
+            prts___levels.clz_Torappu_EnemyDatabase_AttributesDataT
+        )
+
+        recursive_handle_clz_Torappu_EnemyDatabase_AttributesDataT(
+            level_obj,
+            clz_Torappu_EnemyDatabase_AttributesDataT,
+            prts___levels,
+        )
 
         builder = flatbuffers.Builder()
         builder.Finish(level_obj.Pack(builder))

@@ -2,6 +2,54 @@ from openbachelorm.resource import Resource
 from openbachelorm.manifest import ManifestMerger
 
 
+def copy_zonemap_node(mgr: ManifestMerger):
+    mgr.copy_merger_tree_node(
+        "dyn/activity/[uc]act42side/zonemaps/zone_map_act42side_zone1.prefab",
+        "dyn/ui/zonemaps/zone_map_act42side_zone1.prefab",
+    )
+    mgr.copy_merger_tree_node(
+        "dyn/activity/[uc]act42side/zonemaps/zone_map_act42side_zone2.prefab",
+        "dyn/ui/zonemaps/zone_map_act42side_zone2.prefab",
+    )
+    mgr.copy_merger_tree_node(
+        "dyn/activity/[uc]act42side/zonemaps/zone_map_act42side_zone3.prefab",
+        "dyn/ui/zonemaps/zone_map_act42side_zone3.prefab",
+    )
+
+    # ----------
+
+    mgr.copy_merger_tree_node(
+        "dyn/activity/[uc]act43side/zonemaps/zone_map_act43side_zone1.prefab",
+        "dyn/ui/zonemaps/zone_map_act43side_zone1.prefab",
+    )
+    mgr.copy_merger_tree_node(
+        "dyn/activity/[uc]act43side/zonemaps/zone_map_act43side_zone2.prefab",
+        "dyn/ui/zonemaps/zone_map_act43side_zone2.prefab",
+    )
+
+    # ----------
+
+    mgr.copy_merger_tree_node(
+        "dyn/activity/[uc]act19mini/zonemaps/zone_map_act19mini_zone1.prefab",
+        "dyn/ui/zonemaps/zone_map_act19mini_zone1.prefab",
+    )
+
+    # ----------
+
+    mgr.copy_merger_tree_node(
+        "activity/[uc]act44side/zonemaps/zone_map_act44side_zone1",
+        "dyn/ui/zonemaps/zone_map_act44side_zone1.prefab",
+    )
+    mgr.copy_merger_tree_node(
+        "activity/[uc]act44side/zonemaps/zone_map_act44side_zone2",
+        "dyn/ui/zonemaps/zone_map_act44side_zone2.prefab",
+    )
+    mgr.copy_merger_tree_node(
+        "activity/[uc]act44side/zonemaps/zone_map_act44side_zone3",
+        "dyn/ui/zonemaps/zone_map_act44side_zone3.prefab",
+    )
+
+
 def main():
     mgr = ManifestMerger(
         "chronosphere",
@@ -17,10 +65,7 @@ def main():
 
     mgr.merge_src_res()
 
-    mgr.copy_merger_tree_node(
-        "dyn/activity/[uc]act43side/zonemaps/zone_map_act43side_zone1.prefab",
-        "dyn/ui/zonemaps/zone_map_act43side_zone1.prefab",
-    )
+    copy_zonemap_node(mgr)
 
     mgr.merge_special_anon_bundle()
 

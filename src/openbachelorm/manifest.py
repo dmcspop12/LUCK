@@ -337,6 +337,9 @@ class ManifestMerger:
     def copy_merger_tree_node(self, src_path: str, dst_path: str):
         src_node = get_node_by_path(self.merger_tree_root, src_path)
 
+        if src_node is None:
+            raise KeyError(f"{src_path} not found")
+
         add_file_to_tree(
             self.merger_tree_root,
             dst_path,

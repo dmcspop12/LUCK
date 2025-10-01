@@ -325,6 +325,18 @@ archspec = ">=0.2"
 tests = ["imagehash (>=4.3.1)", "pillow (>=10.4.0)", "pytest (>=8.3.3)", "texture2ddecoder"]
 
 [[package]]
+name = "flatbuffers"
+version = "25.9.23"
+description = "The FlatBuffers serialization format for Python"
+optional = false
+python-versions = "*"
+groups = ["main"]
+files = [
+    {file = "flatbuffers-25.9.23-py2.py3-none-any.whl", hash = "sha256:255538574d6cb6d0a79a17ec8bc0d30985913b87513a01cce8bcdb6b4c44d0e2"},
+    {file = "flatbuffers-25.9.23.tar.gz", hash = "sha256:676f9fa62750bb50cf531b42a0a2a118ad8f7f797a511eda12881c016f093b12"},
+]
+
+[[package]]
 name = "fsspec"
 version = "2025.9.0"
 description = "File-system specification"
@@ -997,4 +1009,4 @@ resolved_reference = "22f5d608c5c92699e83c16f04f854462f3eb2bde"
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.12,<4.0"
-content-hash = "6f45dcf8e166ca914253c4ccc5721a03bd4ccd1ead93f139f73cdea7035e77ad"
+content-hash = "01f7a873a049609d06c56c94b95d36a203d06fa1b647ad197b29fc15e8ec4ae9"

@@ -429,8 +429,8 @@ class ManifestMerger:
                 {
                     "assetName": Path(*path_obj.parts[1:]).with_suffix("").as_posix(),
                     "bundleIndex": self.bundle_idx_dict[node.bundle_name],
-                    "name": path_obj.with_suffix("").name,
-                    "path": path,
+                    "name": node.asset.name,
+                    "path": node.asset.path,
                 },
             )
 

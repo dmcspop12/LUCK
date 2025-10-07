@@ -57,7 +57,7 @@ def get_mod_filepath(mod_dirpath: Path, ab_name: str):
     return (mod_dirpath / escape_ab_name(ab_name)).with_suffix(".dat")
 
 
-def build_legacy_pseudo_manifest(torappu_index: UnityPy.Environment):
+def build_legacy_pseudo_manifest(torappu_index: UnityPy.Environment, res_version: str):
     for obj in torappu_index.objects:
         if obj.type.name != "MonoBehaviour":
             continue
@@ -65,6 +65,8 @@ def build_legacy_pseudo_manifest(torappu_index: UnityPy.Environment):
         pseudo_manifest = {}
 
         tree = obj.read_typetree()
+
+        dump_table(tree, f"pseudo_manifest_tree_{res_version}_pre.json")
 
         return pseudo_manifest
 
@@ -118,7 +120,7 @@ class Resource:
 
         torappu_index = self.load_asset("torappu_index.ab")
 
-        self.manifest = build_legacy_pseudo_manifest(torappu_index)
+        self.manifest = build_legacy_pseudo_manifest(torappu_index, self.res_version)
 
         self.manifest_loaded = True
 

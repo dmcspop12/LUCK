@@ -141,8 +141,8 @@ def build_legacy_pseudo_manifest(torappu_index_tree, torappu_tree):
             {
                 "assetName": asset_info["assetName"],
                 "bundleIndex": ab_name_dict[bundle_name],
-                "name": asset_info["name"],
-                "path": asset_info["path"],
+                "name": asset_info.get("name", ""),
+                "path": asset_info.get("path", ""),
             }
         )
 

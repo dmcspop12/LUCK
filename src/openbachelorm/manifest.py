@@ -151,7 +151,10 @@ class ManifestManager:
         else:
             self.is_legacy_unity = True
 
-        res.load_manifest()
+        if Version(res.client_version) < Version("2.4.01"):
+            res.load_legacy_pseudo_manifest()
+        else:
+            res.load_manifest()
 
         self.manifest = res.manifest
 

@@ -57,20 +57,37 @@ def get_mod_filepath(mod_dirpath: Path, ab_name: str):
     return (mod_dirpath / escape_ab_name(ab_name)).with_suffix(".dat")
 
 
-def build_legacy_pseudo_manifest(torappu_index: UnityPy.Environment, res_version: str):
-    for obj in torappu_index.objects:
+def get_torappu_index_tree(torappu_index_ab: UnityPy.Environment, res_version: str):
+    for obj in torappu_index_ab.objects:
         if obj.type.name != "MonoBehaviour":
             continue
 
-        pseudo_manifest = {}
+        tree = obj.read_typetree()
+
+        dump_table(tree, f"torappu_index_tree_{res_version}_pre.json")
+
+        return tree
+
+    return None
+
+
+def get_torappu_tree(torappu_ab: UnityPy.Environment, res_version: str):
+    for obj in torappu_ab.objects:
+        if obj.type.name != "AssetBundleManifest":
+            continue
 
         tree = obj.read_typetree()
 
-        dump_table(tree, f"pseudo_manifest_tree_{res_version}_pre.json")
+        dump_table(tree, f"torappu_tree_{res_version}_pre.json")
 
-        return pseudo_manifest
+        return tree
 
-    raise ValueError("failed to build legacy pseudo manifest")
+    return None
+
+
+def build_legacy_pseudo_manifest():
+    pseudo_manifest = {}
+    return pseudo_manifest
 
 
 class Resource:
@@ -118,9 +135,13 @@ class Resource:
         if self.manifest_loaded:
             return
 
-        torappu_index = self.load_asset("torappu_index.ab")
+        torappu_index_ab = self.load_asset("torappu_index.ab")
+        torappu_index_tree = get_torappu_index_tree(torappu_index_ab, self.res_version)
 
-        self.manifest = build_legacy_pseudo_manifest(torappu_index, self.res_version)
+        torappu_ab = self.load_asset("torappu.ab")
+        torappu_tree = get_torappu_tree(torappu_ab, self.res_version)
+
+        self.manifest = build_legacy_pseudo_manifest()
 
         self.manifest_loaded = True
 

@@ -57,6 +57,20 @@ def get_mod_filepath(mod_dirpath: Path, ab_name: str):
     return (mod_dirpath / escape_ab_name(ab_name)).with_suffix(".dat")
 
 
+def build_legacy_pseudo_manifest(torappu_index: UnityPy.Environment):
+    for obj in torappu_index.objects:
+        if obj.type.name != "MonoBehaviour":
+            continue
+
+        pseudo_manifest = {}
+
+        tree = obj.read_typetree()
+
+        return pseudo_manifest
+
+    raise ValueError("failed to build legacy pseudo manifest")
+
+
 class Resource:
     def __init__(self, client_version: str, res_version: str):
         self.client_version = client_version
@@ -97,6 +111,18 @@ class Resource:
         self.manifest_loaded = True
 
         dump_table(self.manifest, f"manifest_{self.res_version}_pre.json")
+
+    def load_legacy_pseudo_manifest(self):
+        if self.manifest_loaded:
+            return
+
+        torappu_index = self.load_asset("torappu_index.ab")
+
+        self.manifest = build_legacy_pseudo_manifest(torappu_index)
+
+        self.manifest_loaded = True
+
+        dump_table(self.manifest, f"pseudo_manifest_{self.res_version}_pre.json")
 
     def get_ab_name_from_manifest(self, asset_obj):
         return self.manifest["bundles"][asset_obj["bundleIndex"]]["name"]

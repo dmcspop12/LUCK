@@ -3,7 +3,44 @@ from openbachelorm.manifest import ManifestMerger
 
 
 def copy_zonemap_node(mgr: ManifestMerger):
-    pass
+    mgr.copy_merger_tree_node(
+        "activity/[uc]act40side/zonemaps/zone_map_act40side_zone1",
+        "ui/zonemaps/zone_map_act40side_zone1",
+    )
+    mgr.copy_merger_tree_node(
+        "activity/[uc]act40side/zonemaps/zone_map_act40side_zone2",
+        "ui/zonemaps/zone_map_act40side_zone2",
+    )
+    mgr.copy_merger_tree_node(
+        "activity/[uc]act40side/zonemaps/zone_map_act40side_zone3",
+        "ui/zonemaps/zone_map_act40side_zone3",
+    )
+
+    # ----------
+
+    mgr.copy_merger_tree_node(
+        "activity/[uc]act39side/zonemaps/zone_map_act39side_zone1",
+        "ui/zonemaps/zone_map_act39side_zone1",
+    )
+    mgr.copy_merger_tree_node(
+        "activity/[uc]act39side/zonemaps/zone_map_act39side_zone2",
+        "ui/zonemaps/zone_map_act39side_zone2",
+    )
+
+    # ----------
+
+    mgr.copy_merger_tree_node(
+        "activity/[uc]act38side/zonemaps/zone_map_act38side_zone1",
+        "ui/zonemaps/zone_map_act38side_zone1",
+    )
+    mgr.copy_merger_tree_node(
+        "activity/[uc]act38side/zonemaps/zone_map_act38side_zone2",
+        "ui/zonemaps/zone_map_act38side_zone2",
+    )
+    mgr.copy_merger_tree_node(
+        "activity/[uc]act38side/zonemaps/zone_map_act38side_zone3",
+        "ui/zonemaps/zone_map_act38side_zone3",
+    )
 
 
 def main():

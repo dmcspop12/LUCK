@@ -519,6 +519,12 @@ def get_known_table_decorator_lst(
 
 def is_known_table_available(table_name: KnownTable, client_version: str):
     match table_name:
+        case KnownTable.SANDBOX_TABLE:
+            if Version(client_version) < Version("2.4.21"):
+                return False
+        case KnownTable.BUILDING_LOCAL_DATA:
+            if Version(client_version) < Version("2.4.41"):
+                return False
         case (
             KnownTable.CLUE_DATA
             | KnownTable.CRISIS_TABLE

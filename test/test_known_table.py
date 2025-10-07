@@ -23,6 +23,9 @@ def load_known_table(client_version: str, res_version: str):
 
 
 def test_known_table():
+    load_known_table("2.4.01", "24-11-21-11-04-45-bae23b")
+    load_known_table("2.4.21", "25-01-08-07-44-44-3d8742")
+    load_known_table("2.4.41", "25-02-19-09-21-28-ba1f4e")
     load_known_table("2.4.61", "25-03-27-16-19-10-4d4819")
     load_known_table("2.5.04", "25-04-25-08-42-16_acb2f8")
     load_known_table("2.5.60", "25-05-20-12-36-22_4803e1")

@@ -85,8 +85,67 @@ def get_torappu_tree(torappu_ab: UnityPy.Environment, res_version: str):
     return None
 
 
-def build_legacy_pseudo_manifest():
-    pseudo_manifest = {}
+def get_ab_dep_map(torappu_tree):
+    ab_dep_map = {}
+
+    ab_id_dict = {}
+
+    for ab_id, ab_name in torappu_tree["AssetBundleNames"]:
+        ab_id_dict[ab_id] = ab_name
+
+    for ab_id, ab_info in torappu_tree["AssetBundleInfos"]:
+        ab_name = ab_id_dict[ab_id]
+
+        ab_dep_map[ab_name] = [
+            ab_id_dict[i] for i in ab_info["AssetBundleDependencies"]
+        ]
+
+    return ab_dep_map
+
+
+def build_legacy_pseudo_manifest(torappu_index_tree, torappu_tree):
+    pseudo_manifest = {
+        "bundles": [],
+        "assetToBundleList": [],
+    }
+
+    ab_dep_map = get_ab_dep_map(torappu_tree)
+
+    for bundle_info in torappu_index_tree["bundles"]:
+        pseudo_manifest["bundles"].append(
+            {
+                "name": bundle_info["name"],
+                "isCacheable": bool(bundle_info["isCacheable"]),
+                "sccIndex": bundle_info["sccIndex"],
+            },
+        )
+
+    ab_name_dict = {}
+
+    for i, bundle_obj in enumerate(pseudo_manifest["bundles"]):
+        bundle_name = bundle_obj["name"]
+
+        ab_name_dict[bundle_name] = i
+
+    for bundle_obj in pseudo_manifest["bundles"]:
+        bundle_name = bundle_obj["name"]
+
+        bundle_obj["allDependencies"] = [
+            ab_name_dict[i] for i in ab_dep_map.get(bundle_name, [])
+        ]
+
+    for asset_info in torappu_index_tree["assetToBundleList"]:
+        bundle_name = asset_info["bundleName"]
+
+        pseudo_manifest["assetToBundleList"].append(
+            {
+                "assetName": asset_info["assetName"],
+                "bundleIndex": ab_name_dict[bundle_name],
+                "name": asset_info["name"],
+                "path": asset_info["path"],
+            }
+        )
+
     return pseudo_manifest
 
 
@@ -141,7 +200,7 @@ class Resource:
         torappu_ab = self.load_asset("torappu.ab")
         torappu_tree = get_torappu_tree(torappu_ab, self.res_version)
 
-        self.manifest = build_legacy_pseudo_manifest()
+        self.manifest = build_legacy_pseudo_manifest(torappu_index_tree, torappu_tree)
 
         self.manifest_loaded = True
 

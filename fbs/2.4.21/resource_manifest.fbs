@@ -1,8 +1,9 @@
 // This file is auto-generated, see https://github.com/MooncellWiki/OpenArknightsFBS for details.
 table clz_Torappu_Resource_ResourceManifest_BundleMeta {
     name: string; 
-    props: int; 
+    isCacheable: bool; 
     sccIndex: int; 
+    directDependencies: [int]; 
     allDependencies: [int]; 
 }
 

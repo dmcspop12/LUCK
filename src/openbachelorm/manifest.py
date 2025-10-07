@@ -513,6 +513,16 @@ class ManifestMerger:
                 self.bundle_idx_dict[i] for i in merger_bundle.dep_bundle_name_lst
             ]
 
+        if self.target_res_manager.is_legacy_unity:
+            for bundle_name, merger_bundle in self.merger_bundle_dict.items():
+                bundle_idx = self.bundle_idx_dict[bundle_name]
+
+                self.new_manifest["bundles"][bundle_idx]["directDependencies"] = (
+                    deepcopy(
+                        self.new_manifest["bundles"][bundle_idx]["allDependencies"]
+                    )
+                )
+
     def build_mod_asset(self):
         for node in PreOrderIter(self.merger_tree_root):
             if node.is_dir:

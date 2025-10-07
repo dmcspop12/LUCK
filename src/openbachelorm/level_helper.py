@@ -128,6 +128,26 @@ def recursive_handle_clz_Torappu_EnemyDatabase_AttributesDataT(
                 prts___levels.clz_Torappu_Undefinable_1_System_Single_T()
             )
 
+        if hasattr(obj, "disarmedCombatImmune") and obj.disarmedCombatImmune is None:
+            obj.disarmedCombatImmune = (
+                prts___levels.clz_Torappu_Undefinable_1_System_Boolean_T()
+            )
+
+        if hasattr(obj, "fearedImmune") and obj.fearedImmune is None:
+            obj.fearedImmune = (
+                prts___levels.clz_Torappu_Undefinable_1_System_Boolean_T()
+            )
+
+        if hasattr(obj, "damageHitratePhysical") and obj.damageHitratePhysical is None:
+            obj.damageHitratePhysical = (
+                prts___levels.clz_Torappu_Undefinable_1_System_Single_T()
+            )
+
+        if hasattr(obj, "damageHitrateMagical") and obj.damageHitrateMagical is None:
+            obj.damageHitrateMagical = (
+                prts___levels.clz_Torappu_Undefinable_1_System_Single_T()
+            )
+
         return
 
     if isinstance(obj, list):

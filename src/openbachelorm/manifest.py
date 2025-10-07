@@ -3,6 +3,8 @@ from copy import deepcopy
 from pathlib import Path
 import shutil
 import random
+from packaging.version import Version
+
 
 from anytree import Node, PreOrderIter
 from UnityPy import Environment
@@ -140,6 +142,11 @@ ASSET_TREE_ROOT_NAME = "openbachelorm"
 class ManifestManager:
     def __init__(self, res: Resource):
         self.resource = res
+
+        if Version(res.client_version) > Version("2.4.61"):
+            self.is_legacy_unity = False
+        else:
+            self.is_legacy_unity = True
 
         res.load_manifest()
 

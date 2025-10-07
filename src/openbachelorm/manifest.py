@@ -127,6 +127,13 @@ def dump_tree(root: Node, filename: str):
             print(f"{indent * node.depth}{node.name}", file=f)
 
 
+PSEUDO_ASSET_SUFFIX = ".openbachelorm"
+
+
+def get_asset_path(asset_name: str):
+    return f"{asset_name}{PSEUDO_ASSET_SUFFIX}"
+
+
 ASSET_TREE_ROOT_NAME = "openbachelorm"
 
 
@@ -179,11 +186,13 @@ class ManifestManager:
                 bundle=self.bundle_lst[bundle_idx],
             )
 
-            if not asset.path:
+            if not asset.assetName:
                 self.dangling_asset_lst.append(asset)
                 continue
 
-            add_file_to_tree(self.asset_tree_root, asset.path, asset=asset)
+            asset_path = get_asset_path(asset.assetName)
+
+            add_file_to_tree(self.asset_tree_root, asset_path, asset=asset)
 
         dump_tree(self.asset_tree_root, f"asset_tree_{self.resource.res_version}.txt")
 
@@ -246,8 +255,8 @@ def merge_special_anon_bundle(
 
 
 def is_merger_tree_path_allowed(path: str) -> bool:
-    if path.startswith("dyn/gamedata/"):
-        if path.startswith("dyn/gamedata/levels/activities/"):
+    if path.startswith("gamedata/"):
+        if path.startswith("gamedata/levels/activities/"):
             return True
 
         return False
@@ -363,7 +372,10 @@ class ManifestMerger:
         for src_res_manager in self.src_res_manager_lst:
             self.merge_single_src_res(src_res_manager)
 
-    def copy_merger_tree_node(self, src_path: str, dst_path: str):
+    def copy_merger_tree_node(self, src_asset_name: str, dst_asset_name: str):
+        src_path = get_asset_path(src_asset_name)
+        dst_path = get_asset_path(dst_asset_name)
+
         src_node = get_node_by_path(self.merger_tree_root, src_path)
 
         if src_node is None:
@@ -409,7 +421,7 @@ class ManifestMerger:
 
     def migrate_level(self):
         activity_node = get_node_by_path(
-            self.merger_tree_root, "dyn/gamedata/levels/activities/", dir_ok=True
+            self.merger_tree_root, "gamedata/levels/activities/", dir_ok=True
         )
 
         bundle_name_set: set[str] = set()
@@ -490,7 +502,7 @@ class ManifestMerger:
 
             self.new_manifest["assetToBundleList"].append(
                 {
-                    "assetName": Path(*path_obj.parts[1:]).with_suffix("").as_posix(),
+                    "assetName": path_obj.with_suffix("").as_posix(),
                     "bundleIndex": self.bundle_idx_dict[node.bundle_name],
                     "name": node.asset.name,
                     "path": node.asset.path,

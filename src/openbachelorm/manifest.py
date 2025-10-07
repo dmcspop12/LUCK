@@ -335,11 +335,14 @@ class ManifestMerger:
         self.merger_tree_root = new_dir_node(MERGER_TREE_ROOT_NAME)
         self.merger_bundle_dict: dict[str, MergerBundle] = {}
 
-    def recursive_add_bundle(self, bundle: ManifestBundle):
-        if bundle.name in self.target_res_manager.bundle_dict:
+    def recursive_add_bundle(self, bundle: ManifestBundle, bundle_name: str = ""):
+        if not bundle_name:
+            bundle_name = bundle.name
+
+        if bundle_name in self.target_res_manager.bundle_dict:
             return
 
-        if bundle.name in self.merger_bundle_dict:
+        if bundle_name in self.merger_bundle_dict:
             return
 
         merger_bundle = MergerBundle(
@@ -351,7 +354,7 @@ class ManifestMerger:
                 continue
             merger_bundle.dep_bundle_name_lst.append(dep_on.name)
 
-        self.merger_bundle_dict[bundle.name] = merger_bundle
+        self.merger_bundle_dict[bundle_name] = merger_bundle
 
         for dep_on in bundle.dep_on_lst:
             if is_anon_bundle(dep_on):
@@ -374,14 +377,20 @@ class ManifestMerger:
             if not is_merger_tree_path_allowed(path):
                 continue
 
+            bundle_name = node.asset.bundle.name
+
+            # hardcode for now
+            if bundle_name == "gamedata/levels/activities.ab":
+                bundle_name = f"gamedata/levels/activities-{src_res_manager.resource.res_version}.ab"
+
             add_file_to_tree(
                 self.merger_tree_root,
                 path,
                 asset=node.asset,
-                bundle_name=node.asset.bundle.name,
+                bundle_name=bundle_name,
             )
 
-            self.recursive_add_bundle(node.asset.bundle)
+            self.recursive_add_bundle(node.asset.bundle, bundle_name)
 
     def merge_src_res(self):
         for src_res_manager in self.src_res_manager_lst:

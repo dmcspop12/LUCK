@@ -24,6 +24,9 @@ class ManifestBundle:
     sccIndex: int
     allDependencies: list[int]
 
+    isCacheable: bool
+    directDependencies: list[int]
+
     manifest: "ManifestManager"
 
     dep_on_lst: list["ManifestBundle"] = field(default_factory=list)
@@ -165,6 +168,8 @@ class ManifestManager:
                 props=bundle_dict.get("props", 0),
                 sccIndex=bundle_dict.get("sccIndex", 0),
                 allDependencies=deepcopy(bundle_dict.get("allDependencies")),
+                isCacheable=bundle_dict.get("isCacheable", False),
+                directDependencies=deepcopy(bundle_dict.get("directDependencies")),
                 manifest=self,
             )
 
@@ -480,13 +485,22 @@ class ManifestMerger:
 
             bundle = merger_bundle.bundle
 
-            self.new_manifest["bundles"].append(
-                {
-                    "name": bundle_name,
-                    "props": bundle.props,
-                    "sccIndex": next_scc_idx,
-                }
-            )
+            if self.target_res_manager.is_legacy_unity:
+                self.new_manifest["bundles"].append(
+                    {
+                        "name": bundle_name,
+                        "isCacheable": bundle.isCacheable,
+                        "sccIndex": next_scc_idx,
+                    }
+                )
+            else:
+                self.new_manifest["bundles"].append(
+                    {
+                        "name": bundle_name,
+                        "props": bundle.props,
+                        "sccIndex": next_scc_idx,
+                    }
+                )
 
             next_scc_idx += 1
 

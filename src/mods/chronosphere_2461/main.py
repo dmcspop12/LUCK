@@ -75,6 +75,53 @@ def copy_zonemap_node(mgr: ManifestMerger):
         "ui/zonemaps/zone_map_act17mini_zone1",
     )
 
+    # ----------
+
+    mgr.copy_merger_tree_node(
+        "activity/[uc]act34side/zonemaps/zone_map_act34side_zone1",
+        "ui/zonemaps/zone_map_act34side_zone1",
+    )
+    mgr.copy_merger_tree_node(
+        "activity/[uc]act34side/zonemaps/zone_map_act34side_zone2",
+        "ui/zonemaps/zone_map_act34side_zone2",
+    )
+
+    # ----------
+
+    mgr.copy_merger_tree_node(
+        "activity/[uc]act32side/zonemaps/zone_map_act32side_zone1",
+        "ui/zonemaps/zone_map_act32side_zone1",
+    )
+    mgr.copy_merger_tree_node(
+        "activity/[uc]act32side/zonemaps/zone_map_act32side_zone2",
+        "ui/zonemaps/zone_map_act32side_zone2",
+    )
+
+    # ----------
+
+    mgr.copy_merger_tree_node(
+        "activity/[uc]act1r6sre/zonemaps/zone_map_act1r6sre_zone1",
+        "ui/zonemaps/zone_map_act1r6sre_zone1",
+    )
+    mgr.copy_merger_tree_node(
+        "activity/[uc]act1r6sre/zonemaps/zone_map_act1r6sre_zone2",
+        "ui/zonemaps/zone_map_act1r6sre_zone2",
+    )
+
+    # ----------
+
+    mgr.copy_merger_tree_node(
+        "activity/[uc]act16mini/zonemaps/zone_map_act16mini_zone1",
+        "ui/zonemaps/zone_map_act16mini_zone1",
+    )
+
+    # ----------
+
+    mgr.copy_merger_tree_node(
+        "activity/[uc]act15mini/zonemaps/zone_map_act15mini_zone1",
+        "ui/zonemaps/zone_map_act15mini_zone1",
+    )
+
 
 def main():
     mgr = ManifestMerger(

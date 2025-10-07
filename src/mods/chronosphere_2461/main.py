@@ -42,6 +42,39 @@ def copy_zonemap_node(mgr: ManifestMerger):
         "ui/zonemaps/zone_map_act38side_zone3",
     )
 
+    # ----------
+
+    mgr.copy_merger_tree_node(
+        "activity/[uc]act36side/zonemaps/zone_map_act36side_zone1",
+        "ui/zonemaps/zone_map_act36side_zone1",
+    )
+    mgr.copy_merger_tree_node(
+        "activity/[uc]act36side/zonemaps/zone_map_act36side_zone2",
+        "ui/zonemaps/zone_map_act36side_zone2",
+    )
+
+    # ----------
+
+    mgr.copy_merger_tree_node(
+        "activity/[uc]act35side/zonemaps/zone_map_act35side_zone1",
+        "ui/zonemaps/zone_map_act35side_zone1",
+    )
+    mgr.copy_merger_tree_node(
+        "activity/[uc]act35side/zonemaps/zone_map_act35side_zone2",
+        "ui/zonemaps/zone_map_act35side_zone2",
+    )
+    mgr.copy_merger_tree_node(
+        "activity/[uc]act35side/zonemaps/zone_map_act35side_zone3",
+        "ui/zonemaps/zone_map_act35side_zone3",
+    )
+
+    # ----------
+
+    mgr.copy_merger_tree_node(
+        "activity/[uc]act17mini/zonemaps/zone_map_act17mini_zone1",
+        "ui/zonemaps/zone_map_act17mini_zone1",
+    )
+
 
 def main():
     mgr = ManifestMerger(
